@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 function getListData() {
     wherestate = null
-    if (ntaid != 0 && ntaid != 1) {
+    if (roleid != 12) {
         wherestate = "nta ='" + ntaid + "'"
     }
     dtpr = $("#table-list").DataTable({
