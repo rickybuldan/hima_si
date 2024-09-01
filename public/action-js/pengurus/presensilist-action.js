@@ -472,7 +472,7 @@ function showPosition(position) {
         "<br>Distance from UNIKOM: " + distance.toFixed(2) + " meters"
 
     if (distance > distanceThreshold) {
-        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than "+distanceThreshold, "error");
+        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than "+distanceThreshold +" Meters", "error");
         $("#save-btn").prop("disabled", true)
         return false;
     }
