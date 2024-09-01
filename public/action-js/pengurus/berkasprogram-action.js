@@ -267,8 +267,8 @@ $("#add-btn").on("click", function (e) {
     let $el = $("input:radio[name='form-type'][value='" +10+ "']");
     $el.prop("checked", true).prop("disabled", false);
     
-    if (ntaid != 0) {
-    $("#form-nta").val(ntaid).prop("disabled", true);
+    if (roleid != 6) {
+        $("#form-nta").val(ntaid).prop("disabled", true);
     }
     $("#form-status").val(10)
     $("#form-judul").val("").prop("disabled", false);
@@ -439,7 +439,7 @@ async function loadRole() {
             contentType: "application/json",
             data: JSON.stringify({
                 tableName: "users",
-                where: "nta != 0"
+                where: "nta != 0 and us.role_id = 15"
             }),
             beforeSend: function () {
                 // Swal.fire({

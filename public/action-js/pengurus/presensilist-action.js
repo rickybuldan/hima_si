@@ -226,7 +226,7 @@ function editdata(rowData) {
     isObject = rowData;
 
     // setImagePackage(rowData.file_path)
-
+    
     if (rowData.status == 10) {
         aspirasi_status = 10
         $("#save-btn").text("Unvalidated").prop("disabled",true)
