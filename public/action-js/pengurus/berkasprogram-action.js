@@ -15,7 +15,7 @@ $(document).ready(function () {
 function getListData() {
     wherestate = null
     if (roleid != 6 && roleid != 14 && roleid != 15) {
-        wherestate = "nta ='" + ntaid + "'"
+        wherestate = "uk.nta ='" + ntaid + "'"
     }
     dtpr = $("#table-list").DataTable({
         ajax: {
