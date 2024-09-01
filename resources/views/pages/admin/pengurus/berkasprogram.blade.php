@@ -46,6 +46,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>NTA</th>
+                                        <th>Nama</th>
                                         <th>Judul</th>
                                         <th>Status</th>
                                         <th>Tipe Doc</th>
@@ -111,11 +112,11 @@
                                     </div>
                                 </fieldset>
                                 <div class="mb-3 row">
-                                        <label class="col-sm-3 col-form-label">Judul</label>
-                                        <div class="col-sm-9">
-                                            <input id="form-judul" type="text" class="form-control" placeholder="judul">
-                                        </div>
+                                    <label class="col-sm-3 col-form-label">Judul</label>
+                                    <div class="col-sm-9">
+                                        <input id="form-judul" type="text" class="form-control" placeholder="judul">
                                     </div>
+                                </div>
                                 <div class="pengajuan-form">
                                     <div class="mb-3 row">
                                         <label class="col-sm-3 col-form-label">Isi</label>
@@ -134,7 +135,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                 
+
 
                             </form>
                         </div>

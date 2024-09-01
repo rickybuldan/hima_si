@@ -9,5 +9,5 @@ class Aspirasi extends Model
 {
     use HasFactory;
     // protected $table = "obat";
-    protected $fillable = ['nta','nama','judul','s_text','status'];
+    protected $fillable = ['nta','nama','judul','s_text','status','email'];
 }

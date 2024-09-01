@@ -48,6 +48,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>NTA</th>
+                                        <th>Nama</th>
                                         <th>Lokasi</th>
                                         <th>Status</th>
                                         <th>Deskripsi Tugas</th>

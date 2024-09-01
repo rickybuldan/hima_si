@@ -841,6 +841,41 @@ class JsonDataController extends Controller
                     " . $data->tableName;
 
                     $whereClause = isset($data->where) ? " WHERE " . $data->where : "";
+                    
+                    if ($data->tableName == 'berkas_programs') {
+                        $query = "
+                        SELECT
+                            uk.*,
+                            us.name
+                        FROM
+
+                    " . $data->tableName;
+                        $query = $query . "  uk";
+                        $query = $query . "  LEFT JOIN users us ON us.nta = uk.nta";
+                    }
+                    if ($data->tableName == 'presensis') {
+                        $query = "
+                        SELECT
+                            uk.*,
+                            us.name
+                        FROM
+
+                    " . $data->tableName;
+                        $query = $query . "  uk";
+                        $query = $query . "  LEFT JOIN users us ON us.nta = uk.nta";
+                    }
+                    if ($data->tableName == 'uang_kas') {
+                        $query = "
+                        SELECT
+                            uk.*,
+                            us.name
+                        FROM
+
+                    " . $data->tableName;
+                        $query = $query . "  uk";
+                        $query = $query . "  LEFT JOIN users us ON us.nta = uk.nta";
+                    }
+                    // dd($query);
                     if ($data->tableName == 'users') {
                         $query = "
                         SELECT

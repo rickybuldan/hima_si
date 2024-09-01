@@ -187,6 +187,11 @@
                 </div>
             </div>
             <div class="mb-3 row">
+                <div class="col-sm-3">
+                    <input id="form-email" type="text" class="form-control" placeholder="email">
+                </div>
+            </div>
+            <div class="mb-3 row">
 
                 <div class="col-sm-3">
                     <input id="form-judul" type="text" class="form-control" placeholder="Judul">

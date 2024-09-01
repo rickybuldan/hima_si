@@ -143,6 +143,7 @@ class HomeController extends Controller
                         'nta' => $data->nta,
                         's_text' => $data->isi,
                         'status' => $data->status,
+                        'email' => $data->email,
 
                     ] // Kolom yang akan diisi
                 );

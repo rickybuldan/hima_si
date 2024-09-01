@@ -46,6 +46,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>NTA</th>
+                                        <th>Nama</th>
                                         <th>Tanggal Transaksi</th>
                                         <th>Nominal</th>
                                         <th>Bukti Transaksi</th>
@@ -83,10 +84,11 @@
                                 <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Nominal</label>
                                     <div class="col-sm-9">
-                                        <input id="form-nominal" oninput="formatRupiahByElement(this)" type="text" class="form-control" placeholder="nominal">
+                                        <input id="form-nominal" oninput="formatRupiahByElement(this)" type="text"
+                                            class="form-control" placeholder="nominal">
                                     </div>
                                 </div>
-                               <div class="mb-3 row">
+                                <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Bukti Bayar</label>
                                     <div class="col-sm-9">
                                         <input id="form-img" type="file" accept="image/*" class="form-control">

@@ -8,10 +8,10 @@ $(document).ready(function () {
 
 function getListData() {
     wherestate = null
-
     if (roleid != 6 && roleid != 14 && roleid != 15) {
         wherestate = "nta ='" + ntaid + "'"
     }
+
     dtpr = $("#table-list").DataTable({
         ajax: {
             url: baseURL + "/loadGlobal",
@@ -52,10 +52,12 @@ function getListData() {
                 },
             },
             { data: "nta" },
+            { data: "name" },
             { data: "created_at" },
             { data: "nominal" },
             { data: "file_path" },
             { data: "status" },
+
             { data: "id" },
         ],
         columnDefs: [
@@ -72,7 +74,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 3,
+                targets: 4,
                 className: "text-center",
             },
             {
@@ -86,7 +88,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 5,
+                targets: 6,
                 className: "text-center",
             },
             {
@@ -99,17 +101,19 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 4,
+                targets: 5,
                 className: "text-center",
             },
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    if(roleid == 15 ){
+                        $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    }
                     return $rowData;
                 },
                 visible: true,
-                targets: 6,
+                targets: 7,
                 className: "text-center",
                 orderable: false
             },
@@ -163,7 +167,7 @@ function editdata(rowData) {
     }
 
     setImagePackage(rowData.file_path)
-    $("#form-nta").val(rowData.nta);
+    $("#form-nta").val(rowData.ntaid).prop("disabled",true);
     $("#form-nominal").val(formatRupiah(rowData.nominal));
     $("#form-status").val(aspirasi_status)
 

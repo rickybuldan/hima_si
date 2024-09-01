@@ -58,6 +58,7 @@ function getListData() {
                 },
             },
             { data: "nta" },
+            { data: "name" },
             { data: "lokasi" },
             { data: "status" },
             { data: "deskripsi_tugas" },
@@ -91,7 +92,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 3,
+                targets: 4,
                 className: "text-center",
             },
             {
@@ -117,7 +118,7 @@ function getListData() {
 
                 },
                 visible: true,
-                targets: 5,
+                targets: 6,
                 className: "text-center",
             },
 
@@ -146,18 +147,21 @@ function getListData() {
                     return checkin
                 },
                 visible: true,
-                targets: 6,
+                targets: 7,
                 className: "text-center",
             },
 
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    if(roleid == 15){
+                        $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    }
+
                     return $rowData;
                 },
                 visible: true,
-                targets: 7,
+                targets: 8,
                 className: "text-center",
             },
         ],

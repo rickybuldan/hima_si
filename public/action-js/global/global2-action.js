@@ -346,6 +346,13 @@ function checkValidation() {
     }
     if (
         validationSwalFailed(
+            (isObject["email"] = $("#form-email").val()),
+            "email tidak boleh kosong"
+        )
+    )
+        return false;
+    if (
+        validationSwalFailed(
             (isObject["judul"] = $("#form-judul").val()),
             "Judul tidak boleh kosong"
         )
