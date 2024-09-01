@@ -45,7 +45,9 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>NTA / NIM</th>
+                                        <th>NIM</th>
+                                        <th>Nama</th>
+                                        <th>Email</th>
                                         <th>Judul</th>
                                         <th>Status</th>
                                         <th>Isi</th>
@@ -79,7 +81,7 @@
                                         <input id="form-nta" type="text" class="form-control" placeholder="NTA">
                                     </div>
                                 </div>
-                                 <div class="mb-3 row">
+                                <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">Nama</label>
                                     <div class="col-sm-9">
                                         <input id="form-status" type="hidden" class="form-control" placeholder="">

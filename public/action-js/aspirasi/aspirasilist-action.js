@@ -57,6 +57,8 @@ function getListData() {
                 },
             },
             { data: "nta" },
+            { data: "nama" },
+            { data: "email" },
             { data: "judul" },
             { data: "status" },
             { data: "s_text" },
@@ -88,17 +90,19 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 3,
+                targets: 5,
                 className: "text-center",
             },
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    if(roleid == 12){
+                        $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    }
                     return $rowData;
                 },
                 visible: true,
-                targets: 5,
+                targets: 7,
                 className: "text-center",
             },
         ],
