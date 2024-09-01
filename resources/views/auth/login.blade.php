@@ -18,9 +18,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-form-label">Email</label>
-                                <input class="form-control" type="email" required="" placeholder="Test@gmail.com"
-                                    name="email">
+                                <label class="col-form-label">NTA</label>
+                                <input class="form-control" type="text" required="" placeholder="nta"
+                                    name="nta">
                                 <div class="invalid-feedback">Please enter your valid password </div>
                             </div>
                             <div class="form-group">
@@ -30,8 +30,8 @@
                                         placeholder="*********">
                                     <div class="show-hide"><span class="show"> </span></div>
                                 </div>
-                                @if ($errors->has('email'))
-                                    <h6><span class="badge badge-danger mt-3">{{ $errors->first('email') }}</span></h6>
+                                @if ($errors->has('nta'))
+                                    <h6><span class="badge badge-danger mt-3">{{ $errors->first('nta') }}</span></h6>
                                 @endif
                             </div>
                             <div class="form-group mb-0">

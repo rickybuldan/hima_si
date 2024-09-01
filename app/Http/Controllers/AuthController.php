@@ -28,51 +28,52 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validasi input
         $data = $request->validate([
-            'email' => 'required|email',
+            'nta' => 'required|string', // Ganti email dengan nta
             'password' => 'required',
         ], [
-            'email.required' => 'Email cannot be empty.',
-            'email.email' => 'Invalid email format.',
+            'nta.required' => 'NTA cannot be empty.',
             'password.required' => 'Password cannot be empty.',
         ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if ($user = User::where('email', $request->email)->first()) {
-            // Check if the user is active
+    
+        // Mengambil kredensial dari request
+        $credentials = $request->only('nta', 'password');
+    
+        // Mencari user berdasarkan NTA
+        if ($user = User::where('nta', $request->nta)->first()) {
+            // Periksa apakah pengguna aktif
             if ($user->is_active == 1 && Auth::attempt($credentials)) {
                 Auth::logoutOtherDevices($request->password);
-               
-
+    
+                // Menyimpan data session
+                Session::put('user_id', Auth::user()->id);
+                Session::put('name', Auth::user()->name);
+                Session::put('role_id', Auth::user()->role_id);
+                Session::put('nta', Auth::user()->nta);
+    
+                // Redirect berdasarkan peran pengguna
                 if (Auth::user()->roles->first()->role_name == "Customer") {
-                    Session::put('user_id', Auth::user()->id);
-                    Session::put('name', Auth::user()->name);
-                    Session::put('role_id', Auth::user()->role_id);
-                    Session::put('nta', Auth::user()->nta);
                     return redirect(route('home'));
                 } else {
-                    Session::put('user_id', Auth::user()->id);
-                    Session::put('name', Auth::user()->name);
-                    Session::put('role_id', Auth::user()->role_id);
-                    Session::put('nta', Auth::user()->nta);
-                
                     return redirect()->intended('/');
                 }
             } else {
+                // Pesan kesalahan jika kredensial tidak valid atau email belum diverifikasi
                 return redirect()
                     ->back()
-                    ->withErrors(['email' => $user->is_active ? 'Invalid credentials' : 'Silakan verifikasi email terlebih dahulu.'])
+                    ->withErrors(['nta' => $user->is_active ? 'Invalid credentials' : 'Silakan verifikasi email terlebih dahulu.'])
                     ->withInput($request->except('password'));
             }
         } else {
+            // Pesan kesalahan jika NTA tidak terdaftar
             return redirect()
                 ->back()
-                ->withErrors(['email' => 'Email tidak terdaftar.'])
+                ->withErrors(['nta' => 'NTA tidak terdaftar.'])
                 ->withInput($request->except('password'));
         }
-
     }
+    
     public function logout(Request $request)
     {
         Auth::logout();

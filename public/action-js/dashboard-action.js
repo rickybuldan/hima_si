@@ -23,17 +23,28 @@ function getThisMonth() {
 
 function updateChartProfit(data) {
 
-  let grData = data.filter(item => item.transaction_category === 'Grooming');
-  let pnData = data.filter(item => item.transaction_category === 'Penitipan');
+  let pemasukanData = data.filter(item => item.transaction_category === 'Pemasukan');
+  let pengeluaranData = data.filter(item => item.transaction_category === 'Pengeluaran');
+  let saldoData = data.filter(item => item.transaction_category === 'Saldo');
 
-  let TotalProfit = data.reduce((total, item) => total + parseFloat(item.total_price), 0);
+  // Ambil nilai total_price untuk setiap kategori
+  let totalPemasukan = pemasukanData.length > 0 ? pemasukanData[0]['total_price'] : 0;
+  let totalPengeluaran = pengeluaranData.length > 0 ? pengeluaranData[0]['total_price'] : 0;
+  let totalSaldo = saldoData.length > 0 ? saldoData[0]['total_price'] : 0;
+
+  // Hitung total profit
+  let TotalProfit = totalPemasukan - totalPengeluaran;
+
+  // Siapkan data untuk chart
   let chartData = {
-    labels: ["Grooming", "Penitipan", "Other"],
-    series: [grData[0]['transaction_count'], pnData[0]['transaction_count'], 0],
+    labels: ["Pemasukan", "Pengeluaran", "Saldo"],
+    series: [totalPemasukan, totalPengeluaran, totalSaldo]
   };
 
+  // Format harga
   let formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(TotalProfit);
 
+  // Opsi untuk chart
   var optionsprofit = {
     labels: chartData.labels,
     series: chartData.series,
@@ -42,7 +53,10 @@ function updateChartProfit(data) {
       height: 300,
     },
     dataLabels: {
-      enabled: false,
+      enabled: false, // Aktifkan dataLabels untuk format
+      // formatter: function (val) {
+      //   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(val);
+      // }
     },
     legend: {
       position: "bottom",
@@ -81,7 +95,7 @@ function updateChartProfit(data) {
               fontFamily: "Rubik, sans-serif",
               fontWeight: 500,
               label: formattedPrice,
-              formatter: () => "Total Profit",
+              formatter: () => "Total Saldo",
             },
           },
         },
@@ -105,7 +119,7 @@ function updateChartProfit(data) {
         },
       },
     },
-    colors: ["#54BA4A", "var(--theme-deafult)", "#FFA941"],
+    colors: ["#54BA4A", "#FF5733", "#FFA941"], // Warna untuk donut
     responsive: [
       {
         breakpoint: 1630,
@@ -158,12 +172,11 @@ function updateChartProfit(data) {
     ],
   };
 
+  // Render chart
   var chartprofit = new ApexCharts(document.querySelector("#profitmonthly"), optionsprofit);
   chartprofit.render();
-
-  // chartprofit.updateOptions(optionsprofit);
-  // chartprofit.updateSeries(chartData.series);
 }
+
 
 function updateChartTransaction(data) {
 
@@ -176,16 +189,12 @@ function updateChartTransaction(data) {
   // let Sunday = data.filter(item => item.day_of_week === 'Sunday');
 
 
-  var result = data.map(function (item) {
-    return item.transaction_count;
-  });
-
   var resultSuccess = data.map(function (item) {
-    return item.success_count;
+    return item.total_checkin;
   });
 
   var resultFailed = data.map(function (item) {
-    return item.failed_count;
+    return item.total_checkout;
   });
 
   var maxTransactionCount = 0;
@@ -202,11 +211,11 @@ function updateChartTransaction(data) {
   var optionsvisitor = {
     series: [
       {
-        name: "Transaksi Selesai",
+        name: "Checkin",
         data: resultSuccess,
       },
       {
-        name: "Transaksi Batal",
+        name: "Checkout",
         data: resultFailed,
       },
     ],

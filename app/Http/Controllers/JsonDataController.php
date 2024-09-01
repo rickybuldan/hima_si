@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aspirasi;
+use App\Models\BerkasProgram;
 use App\Models\House;
 use App\Models\Package;
 
@@ -913,31 +914,29 @@ class JsonDataController extends Controller
 
 
                     $query = "
-                    SELECT
-                        'Grooming' AS transaction_category,
-                        COALESCE ( COUNT(*), 0 ) AS transaction_count,
-                        COALESCE ( SUM( price_total ), 0 ) AS total_price 
-                    FROM
-                        transactions 
-                    WHERE
-                        transaction_type = 'GR'AND status = 10 UNION ALL
-                    SELECT
-                        'Penitipan' AS transaction_category,
-                        COALESCE ( COUNT(*), 0 ) AS transaction_count,
-                        COALESCE ( SUM( price_total ), 0 )
-                        AS total_price 
-                    FROM
-                        transactions 
-                    WHERE
-                        transaction_type = 'PN' AND status = 10 UNION ALL
-                    SELECT
-                        'Other' AS transaction_category,
-                        COALESCE ( COUNT(*), 0 ) AS transaction_count,
-                        COALESCE ( SUM( price_total ), 0 ) AS total_price 
-                    FROM
-                        transactions 
-                    WHERE
-                        transaction_type NOT IN ( 'GR', 'PN' ) AND status = 10;
+                        SELECT
+                            'Pemasukan' AS transaction_category,
+                            COALESCE ( COUNT(*), 0 ) AS transaction_count,
+                            COALESCE ( SUM( nominal ), 0 ) AS total_price 
+                        FROM
+                            uang_kas 
+                        WHERE
+                            expense = false  UNION ALL
+                        SELECT
+                            'Pengeluaran' AS transaction_category,
+                            COALESCE ( COUNT(*), 0 ) AS transaction_count,
+                            COALESCE ( SUM( nominal ), 0 ) AS total_price 
+                        FROM
+                            uang_kas 
+                        WHERE
+                            expense = true  UNION ALL
+                        SELECT 
+                            'Saldo' AS transaction_category,
+                                COALESCE ( COUNT(*), 0 ) AS transaction_count,
+                            COALESCE(SUM(CASE WHEN expense = false THEN nominal ELSE 0 END), 0) -
+                            COALESCE(SUM(CASE WHEN expense = true THEN nominal ELSE 0 END), 0) AS total_price
+                        FROM
+                            uang_kas;
                     ";
 
 
@@ -1033,28 +1032,41 @@ class JsonDataController extends Controller
                     $query = "
                         SELECT
                             all_days.day_of_week,
-                            COALESCE(COUNT(CASE WHEN transactions.status = 10 THEN transactions.id END), 0) AS success_count,
-                            COALESCE(SUM(CASE WHEN transactions.status = 10 THEN transactions.price_total END), 0) AS success_total,
-                            COALESCE(COUNT(CASE WHEN transactions.status = 50 THEN transactions.id END), 0) AS failed_count,
-                            COALESCE(SUM(CASE WHEN transactions.status = 50 THEN transactions.price_total END), 0) AS failed_total
+                            COALESCE(COUNT(CASE WHEN presensis.status = 10 THEN presensis.id END), 0) AS total_checkin,
+                            COALESCE(COUNT(CASE WHEN presensis.status = 20 THEN presensis.id END), 0) AS total_checkout
                         FROM
                             (
-                                SELECT 'Monday' AS day_of_week, 1 AS day_order
-                                UNION SELECT 'Tuesday', 2
-                                UNION SELECT 'Wednesday', 3
-                                UNION SELECT 'Thursday', 4
-                                UNION SELECT 'Friday', 5
-                                UNION SELECT 'Saturday', 6
-                                UNION SELECT 'Sunday', 7
+                            SELECT
+                                'Monday' AS day_of_week,
+                                1 AS day_order UNION
+                            SELECT
+                                'Tuesday',
+                                2 UNION
+                            SELECT
+                                'Wednesday',
+                                3 UNION
+                            SELECT
+                                'Thursday',
+                                4 UNION
+                            SELECT
+                                'Friday',
+                                5 UNION
+                            SELECT
+                                'Saturday',
+                                6 UNION
+                            SELECT
+                                'Sunday',
+                                7 
                             ) AS all_days
-                        LEFT JOIN
-                            transactions ON DAYNAME(transactions.created_at) = all_days.day_of_week
-                            AND MONTH(transactions.created_at) = MONTH(CURRENT_DATE)
-                            AND YEAR(transactions.created_at) = YEAR(CURRENT_DATE)
+                        LEFT JOIN presensis ON DAYNAME(presensis.checkin) = all_days.day_of_week
+                            AND MONTH(presensis.checkin) = MONTH(CURRENT_DATE)
+                            AND YEAR(presensis.checkin) = YEAR(CURRENT_DATE)
                         GROUP BY
-                            all_days.day_of_week, all_days.day_order
-                        ORDER BY
+                            all_days.day_of_week,
                             all_days.day_order
+                        ORDER BY
+                            all_days.day_order;
+
                     ";
 
 
@@ -1329,6 +1341,7 @@ class JsonDataController extends Controller
                             'id' => $data->id,
                         ],
                         [
+                            'nama' => $data->nama,
                             'judul' => $data->judul,
                             'nta' => $data->nta,
                             's_text' => $data->isi,
@@ -1339,6 +1352,106 @@ class JsonDataController extends Controller
 
 
                     $saved = $MasterClass->checkErrorModel($saved);
+
+                    $status = $saved;
+
+                    if ($status['code'] == $MasterClass::CODE_SUCCESS) {
+                        DB::commit();
+                    } else {
+                        DB::rollBack();
+                    }
+
+                    $results = [
+                        'code' => $status['code'],
+                        'info' => $status['info'],
+                        'data' => $status['data'],
+                    ];
+
+
+
+                } else {
+                    $results = [
+                        'code' => '103',
+                        'info' => "Method Failed",
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Roll back the transaction in case of an exception
+                $results = [
+                    'code' => '102',
+                    'info' => $e->getMessage(),
+                ];
+
+            }
+        } else {
+
+            $results = [
+                'code' => '403',
+                'info' => "Unauthorized",
+            ];
+
+        }
+
+        return $MasterClass->Results($results);
+
+    }
+
+    public function saveBerkasProgram(Request $request)
+    {
+        $MasterClass = new Master();
+
+        $checkAuth = $MasterClass->Authenticated($MasterClass->getSession('user_id'));
+
+        if ($checkAuth['code'] == $MasterClass::CODE_SUCCESS) {
+            try {
+                if ($request->isMethod('post')) {
+
+                    DB::beginTransaction();
+
+                    $data = json_decode($request->input('data'));
+
+                    $status = [];
+                    $filePath = null;
+
+                    if ($request->hasFile('file')) {
+                        $file = $request->file('file');
+                        $fileName = time().'_'.$file->getClientOriginalName();
+                        $filePath = $file->storeAs('uploads/berkas', $fileName, 'public');
+                        $filePath = '/storage/' . $filePath;
+                    }else{
+                        if($data->id){
+                            $berkasProgram = BerkasProgram::find($data->id);
+                            if (!$filePath && $berkasProgram) {
+                                $filePath = $berkasProgram->file_path;
+                            }
+                        }
+                    }
+                    // dd($data);
+                    $saved = BerkasProgram::updateOrCreate(
+                        [
+                            'id' => $data->id,
+                        ],
+                        [
+                            'nta' => $data->nta,
+                            'nta_tujuan' => $data->tujuan,
+                            'type_doc' => $data->type_doc,
+                            'judul' => $data->judul,
+                            'file_path' => $filePath,
+                            
+                            's_text' => $data->isi,
+                            'status' => $data->status,
+                        ]
+                    );
+
+                    $saved = $MasterClass->checkErrorModel($saved);
+    
+                    // } else {
+                    //     $results = [
+                    //         'code' => '104',
+                    //         'info' => "File upload failed",
+                    //     ];
+                    //     return $MasterClass->Results($results);
+                    // }
 
                     $status = $saved;
 
@@ -1405,6 +1518,14 @@ class JsonDataController extends Controller
                     if ($image) {
                         $imagePath = $image->store('images', 'public');
                     }
+                    else{
+                        if($data->id){
+                            $berkasProgram = UangKas::find($data->id);
+                            if (!$imagePath && $berkasProgram) {
+                                $imagePath = $berkasProgram->file_path;
+                            }
+                        }
+                    }
 
                     $saved = UangKas::updateOrCreate(
                         [
@@ -1413,10 +1534,11 @@ class JsonDataController extends Controller
                         [
                             'nominal' => $data->nominal,
                             'nta' => $data->nta,
-                            'file_path' => $imagePath ?? $data->file_path,
+                            'file_path' => $imagePath,
                             'status' => $data->status,
+                            'expense' => $data->expense
 
-                        ] // Kolom yang akan diisi
+                        ] 
                     );
 
 

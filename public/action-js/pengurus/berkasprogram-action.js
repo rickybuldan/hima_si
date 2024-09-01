@@ -1,14 +1,19 @@
-
-
 let dtpr;
 
 $(document).ready(function () {
+    $(".js-example-basic-single").select2({
+        dropdownParent: $("#modal-data"),
+        placeholder: "Pilih Kategori",
+    });
     getListData();
+    loadRole()
 });
+
+
+// console.log(roleid);
 
 function getListData() {
     wherestate = null
-
     if (roleid != 6 && roleid != 14 && roleid != 15) {
         wherestate = "nta ='" + ntaid + "'"
     }
@@ -19,7 +24,7 @@ function getListData() {
             contentType: "application/json", // Set content type to JSON
             data: function (d) {
                 return JSON.stringify({
-                    tableName: "uang_kas",
+                    tableName: "berkas_programs",
                     where: wherestate
                 });
             },
@@ -27,6 +32,7 @@ function getListData() {
                 if (response.code == 0) {
                     es = response.data;
                     // console.log(es);
+
                     return response.data;
                 } else {
                     return response;
@@ -52,23 +58,34 @@ function getListData() {
                 },
             },
             { data: "nta" },
-            { data: "created_at" },
-            { data: "nominal" },
-            { data: "file_path" },
+            { data: "judul" },
             { data: "status" },
+            { data: "type_doc" },
+            { data: "s_text" },
+            { data: "file_path" },
             { data: "id" },
         ],
         columnDefs: [
+            // {
+            //     mRender: function (data, type, row) {
+            //         $rowData = `<img src="/template/admin2/assets/images/lightgallry/01.jpg" style="width:50px">`;
+            //         if(row.file_path){
+            //             $rowData = `<img src="/storage/${row.file_path}" style="width:50px">`;
+            //         }
+
+            //         return $rowData;
+            //     },
+            //     visible: true,
+            //     targets: 1,
+            //     className: "text-center",
+            // },
             {
                 mRender: function (data, type, row) {
-                    // var $rowData = '<button class="btn btn-sm btn-icon isEdit i_update"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit font-medium-2 text-info"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>';
-                    // $rowData += `<button class="btn btn-sm btn-icon delete-record i_delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash font-medium-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`;
-                    $rowData = parseInt(row.nominal)
-
-                    if ($rowData) {
-                        $rowData = formatRupiah(parseInt($rowData))
+                    $rowData = ` <span class="badge badge-dark">Initial</span>`;
+                    if (row.status == 20) {
+                        $rowData = ` <span class="badge badge-success">Validated</span>`;
                     }
-
+                    
                     return $rowData;
                 },
                 visible: true,
@@ -77,25 +94,13 @@ function getListData() {
             },
             {
                 mRender: function (data, type, row) {
-                    // var $rowData = '<button class="btn btn-sm btn-icon isEdit i_update"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit font-medium-2 text-info"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>';
-                    // $rowData += `<button class="btn btn-sm btn-icon delete-record i_delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash font-medium-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`;
-                    $rowData = ` <span class="badge badge-dark">Initial</span>`;
-                    if (row.status == 20) {
-                        $rowData = `<span class="badge badge-success">Validated</span>`;
+                    $rowData = ` <span class="badge badge-dark">Pengajuan</span>`;
+                    if (row.type_doc == 10) {
+                        $rowData = ` <span class="badge badge-warning">Pengajuan</span>`;
                     }
-                    return $rowData;
-                },
-                visible: true,
-                targets: 5,
-                className: "text-center",
-            },
-            {
-                mRender: function (data, type, row) {
-                    $rowData = `<img src="/template/admin2/assets/images/lightgallry/01.jpg" style="width:50px">`;
-                    if (row.file_path) {
-                        $rowData = `<img src="/storage/${row.file_path}" style="width:50px">`;
+                    if (row.type_doc == 20) {
+                        $rowData = ` <span class="badge badge-info">Laporan</span>`;
                     }
-
                     return $rowData;
                 },
                 visible: true,
@@ -104,14 +109,26 @@ function getListData() {
             },
             {
                 mRender: function (data, type, row) {
-                    var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    $rowData = '-'
+                    if (row.file_path) {
+                        $rowData = `<a href="${row.file_path}" target="_blank">Lihat PDF</a>`;
+                    }
                     return $rowData;
                 },
                 visible: true,
                 targets: 6,
                 className: "text-center",
-                orderable: false
+            },
+         
+            {
+                mRender: function (data, type, row) {
+                    var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
+                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    return $rowData;
+                },
+                visible: true,
+                targets: 7,
+                className: "text-center",
             },
         ],
         drawCallback: function (settings) {
@@ -134,50 +151,131 @@ function getListData() {
                     deleteData(rowData);
                 });
         },
-        initComplete: function () {
-            loadRole()
-        },
-
     });
 }
+
+function setImagePackage(urlFile) {
+    console.log(urlFile);
+    $(".img-paket").prop("src", null)
+    if (urlFile) {
+        $(".img-paket").prop("src", "/storage/" + urlFile);
+    } else {
+        urlFile = '/template/admin2/assets/images/lightgallry/01.jpg'
+        $(".img-paket").prop("src", urlFile);
+    }
+}
+
+$("#form-img").change(function () {
+    var file = $(this).prop('files')[0]; // Use $(this) to refer to the element that triggered the event
+    if (file) {
+        if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var imageUrl = e.target.result;
+
+                var img = $("<img>");
+                img.attr("class", "img-paket");
+                img.attr("src", imageUrl);
+                img.attr("style", "width:30%");
+
+                $(".img-paket").replaceWith(img);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+    } else {
+        var img = $("<img>");
+        img.attr("class", "img-paket");
+        imageUrl = '/template/admin2/assets/images/lightgallry/01.jpg'
+        img.attr("src", imageUrl);
+    }
+});
 
 let isObject = {};
 
 function editdata(rowData) {
     isObject = rowData;
 
+    // setImagePackage(rowData.file_path)
+    $("#save-btn").prop("disabled",false)
     aspirasi_status = 10;
-    $("#save-btn").text("Initial").prop("disabled",false)
+    $("#save-btn").text("Review")
 
     if (rowData.status == 10) {
         aspirasi_status = 20
-        $("#save-btn").text("Validating").prop("disabled",false)
+        $("#save-btn").text("Review")
     }
+
     if (rowData.status == 20) {
-        aspirasi_status = 20
-        $("#save-btn").text("Validated").prop("disabled",true)
+        $("#save-btn").prop("disabled",true)
+    }
+    let $el = $("input:radio[name='form-type'][value='" + rowData.type_doc + "']");
+    $el.prop("checked", true).prop("disabled", true);
+
+    if (rowData.type_doc == 10) {
+        $(".pengajuan-form").show();
+        $(".laporan-form").hide();
+    }
+    if (rowData.type_doc == 20) {
+        $(".laporan-form").show();
+        $(".pengajuan-form").hide();
+    }
+    
+    if (rowData.file_path) {
+        $('#fileLabel').text('File exists: ' + rowData.file_path.split('/').pop());
+        $('#form-file').prop('disabled', true);
+    } else {
+        $('#fileLabel').text('Choose a file...');
     }
 
-    setImagePackage(rowData.file_path)
-    $("#form-nta").val(rowData.nta);
-    $("#form-nominal").val(formatRupiah(rowData.nominal));
-    $("#form-status").val(aspirasi_status)
+    $('#form-file').prop('disabled', true);
 
+    if (rowData.status == 10  && rowData.type_doc == 10) {
+        aspirasi_status = 20
+        $('#form-file').prop('disabled', false);
+        $("#save-btn").text("Validated")
+        $(".laporan-form").show();
+        $(".pengajuan-form").hide();
+    }
+    if (rowData.status == 20  && rowData.type_doc == 10) {
+        aspirasi_status = 20
+        $('#form-file').prop('disabled', false);
+        $("#save-btn").text("Validated")
+        $(".laporan-form").show();
+        $(".pengajuan-form").show();
+    }
+
+
+
+    $("#form-status").val(aspirasi_status)
+    $("#form-judul").val(rowData.judul).prop("disabled", true);
+    $("#form-nta").val(rowData.nta).prop("disabled", true);
+    $("#form-isi").text(rowData.s_text).prop("disabled", true);
+    $("#form-nama").val(rowData.nama).prop("disabled", true)
+    $("#form-tujuan").val(rowData.nta_tujuan).prop("disabled", true).trigger("change")
     $("#modal-data").modal("show");
 }
 
 $("#add-btn").on("click", function (e) {
     e.preventDefault();
-    setImagePackage(null)
-
-    aspirasi_status = 10;
     $("#save-btn").text("Simpan")
-    $("#form-status").val(aspirasi_status)
     isObject = {};
     isObject["id"] = null;
-    $("#form-nta").val("");
-    $("#form-nominal").val("");
-
+    $("#form-nta").val("").prop("disabled", false)
+    let $el = $("input:radio[name='form-type'][value='" +10+ "']");
+    $el.prop("checked", true).prop("disabled", false);
+    
+    if (ntaid != 0) {
+    $("#form-nta").val(ntaid).prop("disabled", true);
+    }
+    $("#form-status").val(10)
+    $("#form-judul").val("").prop("disabled", false);
+    $("#form-nta").val("").prop("disabled", false)
+    $("#form-isi").text("").prop("disabled", false)
+    $("#form-nama").val("").prop("disabled", false)
+    $("#form-tujuan").val("").prop("disabled", false)
     $("#modal-data").modal("show");
 });
 
@@ -186,37 +284,60 @@ $("#save-btn").on("click", function (e) {
     checkValidation();
 });
 
+$(".laporan-form").hide();
+$(".pengajuan-form").show();
+
+$("input:radio[name='form-type']").change(function () {
+    let $el = $("input:radio[name='form-type']:checked").val();
+    console.log($el);
+    
+    if ($el == 10) {
+        $(".pengajuan-form").show();
+        $(".laporan-form").hide();
+    }
+    if ($el == 20) {
+        $(".laporan-form").show();
+        $(".pengajuan-form").hide();
+    }
+});
 
 function checkValidation() {
     // console.log($el);
+    let $el = $("input:radio[name=form-type]:checked").val();
     if (
         validationSwalFailed(
             (isObject["nta"] = $("#form-nta").val()),
-            "NTA tidak boleh kosong."
-        )
-    )
-        return false;
-    if (
-        validationSwalFailed(
-            (isObject["nominal"] = unformatRupiah($("#form-nominal").val())),
-            "Nominal tidak boleh kosong."
+            "NTA pengusul tidak boleh kosong."
         )
     )
         return false;
 
+    if (
+        validationSwalFailed(
+            (isObject["tujuan"] = $("#form-tujuan").val()),
+            "NTA tujuan tidak boleh kosong."
+        )
+    )
+        return false;
+    if (
+        validationSwalFailed(
+            (isObject["type_doc"] = $el),
+            "Please choose a type."
+        )
+    )
+        return false;
+
+    isObject["isi"] = $("#form-isi").val()
     isObject["status"] = $("#form-status").val()
-    isObject["expense"] = null
+    isObject["judul"] = $("#form-judul").val()
 
     saveData();
 }
 
-
-
 function deleteData(data) {
-
     swal({
         title: "Are you sure to delete ?",
-        text: "You will not be able to recover this imaginary data !!",
+        text: "You will not be able to recover this imaginary file !!",
         type: "warning",
         showCancelButton: !0,
         confirmButtonColor: "#DD6B55",
@@ -230,14 +351,14 @@ function deleteData(data) {
             $.ajax({
                 url: baseURL + "/deleteGlobal",
                 type: "POST",
-                data: JSON.stringify({ id: data.id, tableName: "uang_kas" }),
+                data: JSON.stringify({ id: data.id, tableName: "aspirasis" }),
                 dataType: "json",
                 contentType: "application/json",
                 beforeSend: function () {
-                    // Swal.fire({
-                    //     title: "Loading",
-                    //     text: "Please wait...",
-                    // });
+                    Swal.fire({
+                        title: "Loading",
+                        text: "Please wait...",
+                    });
                 },
                 complete: function () { },
                 success: function (response) {
@@ -261,25 +382,24 @@ function deleteData(data) {
         } else {
             swal(
                 "Cancelled !!",
-                "Hey, your imaginary data is safe !!",
+                "Hey, your imaginary file is safe !!",
                 "error"
             );
         }
     });
 }
 
-
 function saveData() {
 
     // formdata
     console.log(isObject);
     var formData = new FormData();
-    var file = $("#form-img")[0].files[0];
-    formData.append('image', file);
+    var file = $("#form-file")[0].files[0];
+    formData.append('file', file);
     formData.append('data', JSON.stringify(isObject));
 
     $.ajax({
-        url: baseURL + "/saveUangKas",
+        url: baseURL + "/saveBerkasProgram",
         type: "POST",
         data: formData,
         dataType: "json",
@@ -314,9 +434,13 @@ function saveData() {
 async function loadRole() {
     try {
         const response = await $.ajax({
-            url: baseURL + "/getRole",
+            url: baseURL + "/loadGlobal",
             type: "POST",
-            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                tableName: "users",
+                where: "nta != 0"
+            }),
             beforeSend: function () {
                 // Swal.fire({
                 //     title: "Loading",
@@ -327,60 +451,17 @@ async function loadRole() {
 
         const res = response.data.map(function (item) {
             return {
-                id: item.id,
-                text: item.role_name,
+                id: item.nta,
+                text: item.name,
             };
         });
 
-        $("#form-role").select2({
-            // theme: "bootstrap-5",
-            // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-
+        $("#form-tujuan").select2({
             data: res,
             placeholder: "Please choose an option",
             dropdownParent: $("#modal-data"),
         });
     } catch (error) {
         sweetAlert("Oops...", error.responseText, "error");
-    }
-}
-
-
-$("#form-img").change(function () {
-    var file = $(this).prop('files')[0]; // Use $(this) to refer to the element that triggered the event
-    if (file) {
-        if (file) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                var imageUrl = e.target.result;
-
-                var img = $("<img>");
-                img.attr("class", "img-paket");
-                img.attr("src", imageUrl);
-                img.attr("style", "width:30%");
-
-                $(".img-paket").replaceWith(img);
-            };
-
-            reader.readAsDataURL(file);
-        }
-
-    } else {
-        var img = $("<img>");
-        img.attr("class", "img-paket");
-        imageUrl = '/template/admin2/assets/images/lightgallry/01.jpg'
-        img.attr("src", imageUrl);
-    }
-});
-
-function setImagePackage(urlFile) {
-    console.log(urlFile);
-    $(".img-paket").prop("src", null)
-    if (urlFile) {
-        $(".img-paket").prop("src", "/storage/" + urlFile);
-    } else {
-        urlFile = '/template/admin2/assets/images/lightgallry/01.jpg'
-        $(".img-paket").prop("src", urlFile);
     }
 }

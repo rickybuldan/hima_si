@@ -30,7 +30,7 @@
             <div class="col-xxl-3 col-md-6 box-col-6">
                 <div class="card">
                     <div class="card-header card-no-border">
-                        <h5>Total Profit</h5><span class="f-light f-w-500 f-14">(Detail Profit)</span>
+                        <h5>Uang Kas</h5><span class="f-light f-w-500 f-14">(Detail Uang Kas)</span>
                     </div>
                     <div class="card-body pt-0">
                         <div class="monthly-profit">
@@ -42,7 +42,7 @@
             <div class="col-xxl-9 col-md-6 box-col-12">
                 <div class="card">
                     <div class="card-header card-no-border pb-0">
-                        <h5>Overview Transaksi</h5><span class="f-light f-w-500 f-14">(Transaksi dibulan <b id="this-month">ini</b> berdasarkan
+                        <h5>Overview Presensi</h5><span class="f-light f-w-500 f-14">(Presensi piket dibulan <b id="this-month">ini</b> berdasarkan
                             hari)</span>
                     </div>
                     <div class="card-body pt-0">
@@ -54,7 +54,7 @@
             </div>
 
         </div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
@@ -80,7 +80,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
     <!-- Container-fluid Ends-->
 @endsection

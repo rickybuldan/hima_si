@@ -9,5 +9,5 @@ class UangKas extends Model
 {
     use HasFactory;
     // protected $table = "obat";
-    protected $fillable = ['nta','nominal','file_path','status'];
+    protected $fillable = ['nta','nominal','file_path','status','expense'];
 }

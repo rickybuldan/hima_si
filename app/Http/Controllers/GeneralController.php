@@ -17,8 +17,8 @@ class GeneralController extends Controller
         
         if($checkAuth['code'] == $MasterClass::CODE_SUCCESS){
             $roled = $MasterClass->getSession('role_id');
-            if($roled != 0){
-                return redirect('/userrole');
+            if($roled != 6){
+                return redirect('/aspirasi');
             }
             return redirect('/dashboard');
         }else{
@@ -128,7 +128,8 @@ class GeneralController extends Controller
             $baseURL = url('/');
             $varJs = [
                 'const baseURL = "' . $baseURL . '"',
-                'const ntaid  = '. $MasterClass->getSession('nta')
+                'const ntaid  = '. $MasterClass->getSession('nta'),
+                'const roleid  = '. $MasterClass->getSession('role_id'),
             ];
 
             $menuData = $checkAuth['data'][0];
@@ -213,6 +214,8 @@ class GeneralController extends Controller
             $baseURL = url('/');
             $varJs = [
                 'const baseURL = "' . $baseURL . '"',
+                'const ntaid  = '. $MasterClass->getSession('nta'),
+                'const roleid  = '. $MasterClass->getSession('role_id'),
             ];
 
             $menuData = $checkAuth['data'][0];
@@ -366,6 +369,49 @@ class GeneralController extends Controller
         }
     }
 
+    public function berkasProgram(Request $request){
+
+        $MasterClass = new Master();
+
+        $checkAuth = $MasterClass->AuthenticatedView($request->route()->uri());
+
+        if($checkAuth['code'] == $MasterClass::CODE_SUCCESS){
+
+
+            $javascriptFiles = [
+                asset('action-js/global/global-action.js'),
+                // asset('action-js/generate/generate-action.js'),
+                asset('action-js/pengurus/berkasprogram-action.js'),
+            ];
+        
+            $cssFiles = [
+                // asset('css/main.css'),
+                // asset('css/custom.css'),
+            ];
+            $baseURL = url('/');
+            $varJs = [
+                'const baseURL = "' . $baseURL . '"',
+                'const roleid  = '. $MasterClass->getSession('role_id'),
+                'const ntaid  = '. $MasterClass->getSession('nta')
+            ];
+
+            $menuData = $checkAuth['data'][0];
+    
+            $data = [
+                'javascriptFiles' => $javascriptFiles,
+                'cssFiles' => $cssFiles,
+                'varJs'=> $varJs,
+                'title' => ucwords(strtolower($menuData->header_menu)),
+                'subtitle' => $menuData->menu_name,
+                 // Menambahkan base URL ke dalam array
+            ];
+        
+            return view('pages.admin.pengurus.berkasprogram')
+                ->with($data);
+        }else{
+            return redirect('/login');
+        }
+    }
     
 }
 

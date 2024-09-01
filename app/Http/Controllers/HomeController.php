@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Master;
+use App\Models\Aspirasi;
 use App\Models\Pengadaan;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
@@ -131,59 +132,37 @@ class HomeController extends Controller
 
                 $status = [];
 
-                $image = $request->file('image');
-                $imagePath = null;
-                
-                if($image){
-                    $imagePath = $image->store('images', 'public');
-                }
 
-                $nowdate = now();
-                $notrx = Transaction::generateNoTransaction($nowdate);
-                $createdBy = !empty($data->uid) ? $data->uid : null;
-                $transaction = Transaction::create([
-                    'customer_name' => $data->name,
-                    'transaction_start_date' => $data->date,
-                    'transaction_type' => $data->transaction_type,
-                    'no_transaction' => $notrx,
-                    'address' => $data->address,
-                    'created_by' => $createdBy,
-                    'phone' => $data->phone,
-                    'price_total' => $data->price_total,
-                    'bukti' => $imagePath,
-                    'status' => 40,
-                ]);
+                $saved = Aspirasi::updateOrCreate(
+                    [
+                        'id' => $data->id,
+                    ],
+                    [
+                        'nama' => $data->nama,
+                        'judul' => $data->judul,
+                        'nta' => $data->nta,
+                        's_text' => $data->isi,
+                        'status' => $data->status,
 
-                $saved1 = $MasterClass->checkErrorModel($transaction);
+                    ] // Kolom yang akan diisi
+                );
 
-                foreach ($data->data_pet as $pet) {
-                    $detailTransac = TransactionDetail::create([
-                        'transaction_id' => $transaction->id,
-                        'package_id' => $pet->package,
-                        'pet_name' => $pet->name,
-                        'karyawan_id' => $pet->karyawan_id,
-                        'pet_type' => $pet->type,
-                    ]);
 
-                    $saved2 = $MasterClass->checkErrorModel($detailTransac);
-                }
+                $saved = $MasterClass->checkErrorModel($saved);
 
-                $status = $saved2;
-                
+                $status = $saved;
 
                 if ($status['code'] == $MasterClass::CODE_SUCCESS) {
                     DB::commit();
-                    
                 } else {
                     DB::rollBack();
                 }
-                $status = $saved1;
+
                 $results = [
                     'code' => $status['code'],
                     'info' => $status['info'],
                     'data' => $status['data'],
                 ];
-
             } else {
                 $results = [
                     'code' => '103',
@@ -205,7 +184,7 @@ class HomeController extends Controller
 
     }
 
-    
+
 
 }
 

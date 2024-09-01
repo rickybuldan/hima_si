@@ -8,7 +8,8 @@ $(document).ready(function () {
 
 function getListData() {
      wherestate = "nta !='0'"
-    if (ntaid == 0) {
+
+     if (roleid == 6 || roleid == 14 || roleid == 15) {
         wherestate = null
     }
     dtpr = $("#table-list").DataTable({

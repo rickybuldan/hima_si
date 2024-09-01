@@ -6,7 +6,6 @@ $(document).ready(function () {
     getListData();
 });
 
-
 let month = null
 function getListData() {
     dtpr = $("#table-list").DataTable({
@@ -16,8 +15,8 @@ function getListData() {
             contentType: "application/json", // Set content type to JSON
             data: function (d) {
                 return JSON.stringify({
-                    tableName: "transactions",
-                    where :`DATE_FORMAT(created_at, '%Y-%m') = '${month}' AND status = 10`
+                    tableName: "uang_kas",
+                    where: `DATE_FORMAT(created_at, '%Y-%m') = '${month}'`
                 });
             },
             dataSrc: function (response) {
@@ -36,24 +35,19 @@ function getListData() {
         },
         dom: 'Bfrtip', // 'B' is for buttons
         buttons: [
-               
+
             {
                 extend: 'excel',
                 text: 'Export ke Excel',
                 init: function (api, node, config) {
-                    // Capture the DataTables API instance
                     dtpr = api;
-
-                    // Your DataTable initialization logic here
                 },
                 customize: function (xlsx) {
-                    // Calculate total revenue using dtpr
-                    var totalRevenue = dtpr.column(4, { search: 'applied' }).data().reduce(function (a, b) {
+                    var totalRevenue = dtpr.column(3, { search: 'applied' }).data().reduce(function (a, b) {
                         return parseInt(a) + parseInt(b);
                     }, 0);
 
 
-                    // Add a new row for total revenue
                     var sheet = xlsx.xl.worksheets['sheet1.xml'];
                     var lastCol = sheet.getElementsByTagName('col').length;
                     var totalRow = sheet.getElementsByTagName('sheetData')[0].appendChild(document.createElement('row'));
@@ -73,7 +67,7 @@ function getListData() {
                     }
                 }
             },
-            'pdf'  
+            'pdf'
 
         ],
         language: {
@@ -91,38 +85,48 @@ function getListData() {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
             },
-            { data: "transaction_start_date" },
-            { data: "no_transaction" },
-            { data: "customer_name" },
-            { data: "price_total" },
+            { data: "nta" },
+            { data: "created_at" },
+            { data: "nominal" },
+            { data: "file_path" },
             { data: "status" },
 
         ],
         columnDefs: [
             {
                 mRender: function (data, type, row) {
-                    $rowData = ``
-                    if (row.transaction_type == "GR") {
-                        $rowData = `<span class="badge rounded-pill badge-primary">Grooming</span>`
-                    }
-                    if (row.transaction_type == "PN") {
-                        $rowData = `<span class="badge rounded-pill badge-success">Penitipan</span>`
+                    // var $rowData = '<button class="btn btn-sm btn-icon isEdit i_update"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit font-medium-2 text-info"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>';
+                    // $rowData += `<button class="btn btn-sm btn-icon delete-record i_delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash font-medium-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`;
+                    $rowData = parseInt(row.nominal)
+
+                    if ($rowData) {
+                        $rowData = formatRupiah(parseInt($rowData))
+                        if(row.expense){
+                            $rowData += `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
+                                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                            <polyline points="17 18 23 18 23 12"></polyline>
+                                        </svg>` 
+                        }else{
+                            $rowData += `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
+                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                            <polyline points="17 6 23 6 23 12"></polyline>
+                                        </svg>`
+                        }
                     }
 
-                    if (row.status == 10) {
-                        $rowData += `<span class="badge rounded-pill badge-primary">Selesai</span>`
-                    }
+                    return $rowData;
+                },
+                visible: true,
+                targets: 3,
+                className: "text-center",
+            },
+            {
+                mRender: function (data, type, row) {
+                    // var $rowData = '<button class="btn btn-sm btn-icon isEdit i_update"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit font-medium-2 text-info"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>';
+                    // $rowData += `<button class="btn btn-sm btn-icon delete-record i_delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash font-medium-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`;
+                    $rowData = ` <span class="badge badge-dark">Initial</span>`;
                     if (row.status == 20) {
-                        $rowData += `<span class="badge rounded-pill badge-warning">Booked/Paid</span>`
-                    }
-                    if (row.status == 30) {
-                        $rowData += `<span class="badge rounded-pill badge-info">Proses</span>`
-                    }
-                    if (row.status == 40) {
-                        $rowData += `<span class="badge rounded-pill badge-danger">Unpaid</span>`
-                    }
-                    if (row.status == 50) {
-                        $rowData += `<span class="badge rounded-pill badge-secondary">Cancel</span>`
+                        $rowData = `<span class="badge badge-success">Validated</span>`;
                     }
                     return $rowData;
                 },
@@ -130,61 +134,61 @@ function getListData() {
                 targets: 5,
                 className: "text-center",
             },
+            {
+                mRender: function (data, type, row) {
+                    $rowData = `<img src="/template/admin2/assets/images/lightgallry/01.jpg" style="width:50px">`;
+                    if (row.file_path) {
+                        $rowData = `<img src="/storage/${row.file_path}" style="width:50px">`;
+                        $rowData += `<a href="/storage/${row.file_path}">Link File</a>`;
+                    }
 
-            // {
-            //     mRender: function (data, type, row) {
+                    return $rowData;
+                },
+                visible: true,
+                targets: 4,
+                className: "text-center",
+            },
 
-            //         $rowData = ""
-            //         $rowData += `<button type="button" class="btn btn-info btn-sm invoice-btn"><i class="fa fa-list-alt"></i> Invoice</button>`;
-            //         if (row.status == 20) {
-            //             $rowData += ` <button type="button" class="btn btn-info btn-sm process-btn"><i class="fa fa-check"></i> Proses</button>`;
-            //             $rowData += ` <button type="button" class="btn btn-secondary btn-sm cancel-btn"><i class="fa fa-ban"></i> Batal</button>`;
-            //         }
-
-            //         if (row.status == 30) {
-            //             $rowData += ` <button type="button" class="btn btn-primary btn-sm done-btn"><i class="fa fa-file-text-o"></i> Selesai</button>`;
-            //         }
-
-            //         if (row.status == 40) {
-            //             $rowData += ` <button type="button" class="btn btn-danger btn-sm paid-btn"><i class="fa fa-clock-o"></i> Bayar</button>`;
-            //             $rowData += ` <button type="button" class="btn btn-secondary btn-sm cancel-btn"><i class="fa fa-ban"></i> Batal</button>`;
-            //         }
-
-            //         return $rowData;
-            //     },
-            //     visible: true,
-            //     targets: 6,
-            //     className: "text-center",
-            // },
         ],
         initComplete: function (settings, json) {
             // Create an input element of type 'text' to attach Flatpickr
             var dateInput = document.createElement('input');
             dateInput.type = 'month';
-            dateInput.className = 'form-control'; 
+            dateInput.className = 'form-control';
             dateInput.id = 'datetime-local';
             dateInput.placeholder = 'Select a month';
 
             $('.dt-buttons').append(dateInput);
 
-            var textInput = document.createElement('input');
-            textInput.type = 'text';
-            textInput.className = 'form-control my-1'; 
-            textInput.id = 'total-pendapatan';
-            textInput.placeholder = 'Total Pendapatan';
-            textInput.readOnly = true;
+            var totalPendapatan = document.createElement('span');
+            totalPendapatan.className = 'badge badge-info my-1';
+            totalPendapatan.id = 'total-saldo';
+            totalPendapatan.textContent = 'Saldo: 0'; // Set initial text
+        
+            var totalPengeluaran = document.createElement('span');
+            totalPengeluaran.className = 'badge badge-danger my-1';
+            totalPengeluaran.id = 'total-pengeluaran';
+            totalPengeluaran.textContent = 'Total Pengeluaran: 0'; // Set initial text
+        
+            var totalPemasukan = document.createElement('span');
+            totalPemasukan.className = 'badge badge-success my-1';
+            totalPemasukan.id = 'total-pemasukan';
+            totalPemasukan.textContent = 'Total Pemasukan: 0'; // Set initial text
+        
+            // Append the spans to the '.dt-buttons'
+            $('.dt-buttons').append(totalPendapatan);
+            $('.dt-buttons').append(totalPengeluaran);
+            $('.dt-buttons').append(totalPemasukan);
 
-            $('.dt-buttons').append(textInput);
-            
-    
-            $("#datetime-local").on("change",function () {
+
+            $("#datetime-local").on("change", function () {
                 month = $(this).val()
                 dtpr.clear().draw(); // Clear the current data
-                dtpr.ajax.reload(); 
+                dtpr.ajax.reload();
 
             })
 
-           
+
             // Initialize Flatpickr on the input element
             // flatpickr('#datetime-local', {
             //     dateFormat: 'Y-m', // Set the format for the visible input (only month and year)
@@ -194,7 +198,7 @@ function getListData() {
             //         // Directly update the DataTable
             //         dtpr.clear().draw(); // Clear the current data
             //         dtpr.ajax.reload(); // Reload the DataTable using Ajax
-        
+
             //         // You can also add your logic with the selected date here
             //         console.log('Selected date:', dateStr);
             //     }
@@ -211,11 +215,20 @@ function getListData() {
             var last = null;
 
             // Calculate totals for specific columns
-            var totalColumn1 = api.column(4).data().reduce(function (a, b) {
-                return parseInt(a) + parseInt(b);
+            var totalExpense = api.rows().data().reduce(function (sum, row) {
+                return sum + (row.expense ? parseInt(row.nominal) : 0);
             }, 0);
-
-            $("#total-pendapatan").val("Rp. "+ totalColumn1);
+    
+            var totalRevenue = api.rows().data().reduce(function (sum, row) {
+                return sum + (!row.expense ? parseInt(row.nominal) : 0);
+            }, 0);
+    
+            var totalMoney = totalRevenue - totalExpense;
+    
+            // Format the totals and update the input fields
+            $("#total-pendapatan").text("Total Pemasukan:"+formatRupiah(totalRevenue));
+            $("#total-pengeluaran").text("Total Pengeluaran:"+formatRupiah(totalExpense));
+            $("#total-saldo").text("Saldo:"+formatRupiah(totalMoney));
 
             $(rows)
                 .find(".done-btn")
@@ -361,27 +374,6 @@ async function loadKaryawan() {
 }
 
 
-$("#save-btn").on("click", function (e) {
-    e.preventDefault();
-    checkValidation();
-});
-
-
-function checkValidation() {
-
-    // console.log($el);
-    if (
-        validationSwalFailed(
-            (isObject["karyawan_id"] = $("#sel-karyawan").val()),
-            "Karyawan harus dipilih."
-        )
-    )
-        return false;
-
-
-    saveData();
-}
-
 
 
 function saveData() {
@@ -440,6 +432,127 @@ function saveData() {
     });
 }
 
+$("#add-btn").on("click", function (e) {
+    e.preventDefault();
+    $("#save-btn").text("Simpan")
+    isObject = {};
+    isObject["id"] = null;
+    $("#form-nta").val("").prop("disabled", false)
+    if (ntaid != 0) {
+        $("#form-nta").val(ntaid).prop("disabled", true);
+    }
+    $("#form-status").val(20)
+    $("#form-nominal").val("");
+    $("#modal-data").modal("show");
+});
 
 
+$("#save-btn").on("click", function (e) {
+    e.preventDefault();
+    checkValidation();
+});
 
+function checkValidation() {
+    // console.log($el);
+    if (
+        validationSwalFailed(
+            (isObject["nta"] = $("#form-nta").val()),
+            "NTA tidak boleh kosong."
+        )
+    )
+        return false;
+    if (
+        validationSwalFailed(
+            (isObject["nominal"] = unformatRupiah($("#form-nominal").val())),
+            "Nominal tidak boleh kosong."
+        )
+    )
+        return false;
+
+    isObject["status"] = $("#form-status").val()
+    isObject["expense"] = 1
+
+    saveData();
+}
+
+function saveData() {
+
+    // formdata
+    console.log(isObject);
+    var formData = new FormData();
+    var file = $("#form-img")[0].files[0];
+    formData.append('image', file);
+    formData.append('data', JSON.stringify(isObject));
+
+    $.ajax({
+        url: baseURL + "/saveUangKas",
+        type: "POST",
+        data: formData,
+        dataType: "json",
+        processData: false, // Important: prevent jQuery from automatically processing the data
+        contentType: false,
+        beforeSend: function () {
+            Swal.fire({
+                title: "Loading",
+                text: "Please wait...",
+            });
+        },
+        complete: function () { },
+        success: function (response) {
+            // Handle response sukses
+            if (response.code == 0) {
+                swal("Saved !", response.message, "success").then(function () {
+                    location.reload();
+                });
+                // Reset form
+            } else {
+                sweetAlert("Oops...", response.message, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+}
+
+
+$("#form-img").change(function () {
+    var file = $(this).prop('files')[0]; // Use $(this) to refer to the element that triggered the event
+    if (file) {
+        if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var imageUrl = e.target.result;
+
+                var img = $("<img>");
+                img.attr("class", "img-paket");
+                img.attr("src", imageUrl);
+                img.attr("style", "width:30%");
+
+                $(".img-paket").replaceWith(img);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+    } else {
+        var img = $("<img>");
+        img.attr("class", "img-paket");
+        imageUrl = '/template/admin2/assets/images/lightgallry/01.jpg'
+        img.attr("src", imageUrl);
+    }
+});
+
+function setImagePackage(urlFile) {
+    console.log(urlFile);
+    $(".img-paket").prop("src", null)
+    if (urlFile) {
+        $(".img-paket").prop("src", "/storage/" + urlFile);
+    } else {
+        urlFile = '/template/admin2/assets/images/lightgallry/01.jpg'
+        $(".img-paket").prop("src", urlFile);
+    }
+}

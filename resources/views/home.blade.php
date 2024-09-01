@@ -174,9 +174,27 @@
         </div>
     </section>
     <div class="p-5">
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+        <div class="mb-3 row">
+
+            <div class="col-sm-3">
+                <input id="form-status" type="hidden" class="form-control" placeholder="NTA">
+                <input id="form-nta" type="text" class="form-control" placeholder="NIM">
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="col-sm-3">
+                <input id="form-nama" type="text" class="form-control" placeholder="Nama">
+            </div>
+        </div>
+        <div class="mb-3 row">
+
+            <div class="col-sm-3">
+                <input id="form-judul" type="text" class="form-control" placeholder="Judul">
+            </div>
+        </div>
+        <textarea class="form-control" id="form-isi" placeholder="Isi aspirasi" rows="5"></textarea>
         <div class="text-start mt-3">
-            <a class="btn btn-primary" href="https://www.unikom.ac.id/">Simpan aspirasi</a>
+            <a class="btn btn-primary" id="save-btn">Simpan aspirasi</a>
         </div>
     </div>
     {{-- 
@@ -232,7 +250,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12 footer-copyright text-center">
-                    <p class="mb-0">Copyright 2024 © IMA-SI (Sistem Informasi Kegiatan Organisasi Himpunan) </p>
+                    <p class="mb-0">Copyright 2024 © HIMA-SI (Sistem Informasi Kegiatan Organisasi Himpunan) </p>
                 </div>
             </div>
         </div>

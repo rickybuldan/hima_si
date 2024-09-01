@@ -12,6 +12,10 @@ $(document).ready(function () {
 // console.log(roleid);
 
 function getListData() {
+    wherestate = null
+    if (ntaid != 0 && ntaid != 1) {
+        wherestate = "nta ='" + ntaid + "'"
+    }
     dtpr = $("#table-list").DataTable({
         ajax: {
             url: baseURL + "/loadGlobal",
@@ -20,7 +24,7 @@ function getListData() {
             data: function (d) {
                 return JSON.stringify({
                     tableName: "aspirasis",
-                    where: " status ='10'"
+                    where: wherestate
                 });
             },
             dataSrc: function (response) {
@@ -183,7 +187,7 @@ function editdata(rowData) {
     $("#form-judul").val(rowData.judul).prop("disabled", true);
     $("#form-nta").val(rowData.nta).prop("disabled", true);
     $("#form-isi").text(rowData.s_text).prop("disabled", true);
-
+    $("#form-nama").val(rowData.nama).prop("disabled", true)
     $("#modal-data").modal("show");
 }
 
@@ -201,6 +205,7 @@ $("#add-btn").on("click", function (e) {
     $("#form-judul").val("").prop("disabled", false);
     $("#form-nta").val("").prop("disabled", false)
     $("#form-isi").text("").prop("disabled", false)
+    $("#form-nama").val("").prop("disabled", false)
 
     $("#modal-data").modal("show");
 });
@@ -236,7 +241,7 @@ function checkValidation() {
         return false;
 
     isObject["status"] = $("#form-status").val()
-
+    isObject["nama"] = $("#form-nama").val()
 
     saveData();
 }

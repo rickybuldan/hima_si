@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 function getListData() {
     wherestate = null
-    if (ntaid != 0 && ntaid != 1) {
+    if (roleid != 6 && roleid != 14 && roleid != 15) {
         wherestate = "nta ='" + ntaid + "'"
     }
     dtpr = $("#table-list").DataTable({
@@ -257,8 +257,8 @@ $("#add-btn").on("click", function (e) {
 
         $("#form-nta").val("").prop("disabled", false)
 
-        if (ntaid != 0) {
-            $("#form-nta").val(ntaid).prop("disabled", true);
+        if (roleid != 6) {
+            $("#form-nta").val(roleid).prop("disabled", true);
         }
         $("#form-status").val(10)
         $("#form-lokasi").val("").prop("disabled", true);
@@ -427,7 +427,7 @@ function saveData() {
 
 const unikomLatitude = -6.8894;
 const unikomLongitude = 107.6100;
-const distanceThreshold = 10000000;
+const distanceThreshold = 100000;
 
 function getLocation() {
     Swal.fire({

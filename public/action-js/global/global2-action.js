@@ -4,6 +4,16 @@ $.ajaxSetup({
     },
 });
 
+function validationSwalFailed(param, isText) {
+    // console.log(param);
+    if (param == "" || param == null) {
+        sweetAlert("Oops...", isText, "warning");
+
+        return 1;
+    }
+}
+isObject = {}
+
 $(".right-arrow").remove();
 (function ($) {
     if (localStorage.getItem("color"))
@@ -305,338 +315,64 @@ $(document).ready(function () {
 });
 
 
-function loadUidData() {
-
-    $.ajax({
-        url: baseURL + "/home/loadGlobal",
-        type: "POST",
-        data: JSON.stringify({ tableName: 'users', where: "id = '" + uid + "'" }),
-        dataType: "json",
-        contentType: "application/json",
-        beforeSend: function () {
-            // Swal.fire({
-            //     title: "Loading",
-            //     text: "Please wait...",
-            // });
-        },
-
-        complete: function () { },
-        success: function (response) {
-            // Handle response sukses
-            if (response.code == 0) {
-                // swal("Saved !", response.message, "success").then(function () {
-                //     // location.reload();
-                //     location.href = baseURL+"/invoice?noinvoice="+response.data.no_transaction
-                // });
-                // Reset form
-                data = response.data;
-                $("#v-nama").val(data[0].name).prop("readonly", true)
-                $("#v-phone").val(data[0].phone).prop("readonly", true)
-                $("#v-email").val(data[0].email).prop("readonly", true)
-                $("#v-alamat").val(data[0].address).prop("readonly", true)
-
-            } else {
-                sweetAlert("Oops...", response.message, "error");
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            // console.log(xhr.responseText);
-            sweetAlert("Oops...", xhr.responseText, "error");
-        },
-    });
-}
-
-function getMenuAccess() {
-
-    menuel = `
-    <li class="sidebar-main-title">
-        <div>
-            <h6 class="lan-1">Appointment</h6>
-        </div>
-    </li><li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="#set-appointment">
-        <i class="fa fa-dot-circle-o"></i>
-        <span>Beranda</span>
-        <div class="according-menu"><i class="fa fa-angle-right"></i></div>
-        <div class="according-menu"><i class="fa fa-angle-right"></i></div></a>
-    </li></ul>
-    
-    <li class="sidebar-main-title">
-        <div>
-            <h6 class="lan-1">Tentang Kami</h6>
-        </div>
-    </li><li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="#contact-kimi">
-        <i class="fa fa-dot-circle-o"></i>
-        <span>Aspirasi</span>
-        <div class="according-menu"><i class="fa fa-angle-right"></i></div>
-        <div class="according-menu"><i class="fa fa-angle-right"></i></div></a>
-    </li></ul>
-    `
-    $('.simplebar-content .pin-title').after(menuel);
-
-    const currentUrl = window.location.pathname;
-
-    $(".simplebar-content").find('.sidebar-list a').each(function () {
-        var menuItemUrl = $(this).attr('href');
-
-        if (currentUrl === menuItemUrl) {
-
-            $(this).addClass('active');
-        }
-    });
-
-
-}
-
-function validationSwalFailed(param, isText) {
-    console.log(param);
-    if (param == "" || param == null || param == 0) {
-        sweetAlert("Oops...", isText, "warning");
-
-        return 1;
-    }
-}
-
-
-let isObject = {}
-let startDate;
-$(document).ready(function () {
-    flatpickr("#datetime-local", {
-        enableTime: false,
-        minDate: "today",
-        // mode:"range",
-        dateFormat: "Y-m-d",
-
-        onClose: function (selectedDates) {
-            // console.log(selectedDates);
-            startDate = this.formatDate(selectedDates[0], "Y-m-d");
-            var formattedDate = this.formatDate(selectedDates[0], "Y-m-d");
-            loadLastTransaction(formattedDate)
-            // if (selectedDates.length === 2) {
-                
-
-            // }
-        },
-    });
-
-});
-
-
-counter = 0;
-$("#add-btn").on("click", function (e) {
-    e.preventDefault();
-
-    counter++;
-
-    el = ` <tr id="item${counter}">
-    <td><input class="form-control form-control-lg v-pet pet-name" type="text"
-            placeholder="Nama Pet" required=""></td>
-    <td><select class="form-control pet-package" id="sel-package${counter}">
-    </select></td>
-    <td><select class="form-control pet-karyawan" id="sel-karyawan${counter}">
-    </select></td>
-    <td><select class="form-control form-control-lg v-pet pet-type" id="sel-petitem${counter}">
-    </select></td>
-   
-    <td><a class="btn btn-danger" onclick="deleteItem(${counter})"><i
-                class="fa fa-minus"></i></a></td>
-    </tr>`;
-    $("#f-pet").append(el);
-
-    loadPackage(counter);
-    loadKaryawan(counter);
-    loadPet(counter);
-
-});
-
-
-$('#f-pet').on('change', '.pet-package', function () {
-    if ($(this).val()) {
-        countTotal();
-    }
-
-    var selectedPackage = $(this).val();
-        
-    var karyawanSelectId = $(this).attr('id').replace('sel-package', 'sel-karyawan');
-    
-    var newKaryawanValue = '';
-    if (selectedPackage === '6') { 
-        newKaryawanValue = '22'; 
-        $('#' + karyawanSelectId).prop('disabled', true);
-        $('#' + karyawanSelectId).val(newKaryawanValue);
-        $('#' + karyawanSelectId).trigger('change');
-    } else {
-        loadKaryawan(karyawanSelectId);
-        $('#' + karyawanSelectId).prop('disabled', false);
-
-    }
-
-
-});
-
-$("#save-btn").hide();
-// $(".jumlah-bayar").hide();
-// $(".sisa-bayar").hide();
-
-function countTotal() {
-    let total_price = 0;
-    $('tr[id^="item"]').each(function (index) {
-
-        val = $(this).find('.pet-package').val()
-        if (val) { // check if elid is not null or undefined
-            selectedOptionText = $(this).find('.pet-package :selected').text()
-            arrPrice = selectedOptionText.split("-");
-            total_price += parseInt(arrPrice[1]);
-        }
-
-    });
-
-
-    $(".v-total").val(total_price)
-    if (total_price > 0) {
-        $("#save-btn").show();
-        // $(".jumlah-bayar").val(0).show();
-        // $(".sisa-bayar").val(0).show();
-    }
-}
-
-
-// $('.jumlah-bayar').on('input', function () {
-
-//     if( $(this).val() > 0){
-//         hasil = $(this).val() - parseInt($(".v-total").val()) 
-//         $(".sisa-bayar").val(hasil).show();
-//         if(hasil >= 0 ){
-//             $("#save-btn").show();
-//         }else{
-//             $("#save-btn").hide();
-//         }
-//     }else{
-//         $(".sisa-bayar").val(0).show();
-//         $("#save-btn").hide();
-//     }
-// });
-
-
-function deleteItem(params) {
-    $(`#item${params}`).remove()
-}
-
 $("#save-btn").on("click", function (e) {
     e.preventDefault();
-    let dataPet = [];
-    let total_price = 0;
-
-    $('tr[id^="item"]').each(function (index) {
-
-        let name = $(this).find(".pet-name").val();
-        let package = $(this).find(".pet-package").val();
-        let type = $(this).find(".pet-type").val();
-        let karyawan = $(this).find(".pet-karyawan").val();
-        var selectedOptionText = $('.pet-package :selected').text();
-
-        arrPrice = selectedOptionText.split("-")
-        total_price += parseInt(arrPrice[1]);
-
-        if (name && package && type && karyawan) {
-            let pet = {
-                name: name,
-                package: package,
-                karyawan_id: karyawan,
-                type: type,
-            };
-
-            dataPet.push(pet);
-        }
-    });
-    isObject.transaction_type = "GR";
-    isObject.price_total = total_price;
-    timex = $(".tipebayar").val()
-    arrtime = timex.split('-')
-    startDate = new Date(startDate + 'T' + arrtime[0] + ':00');
-    // Membuat tanggal lengkap untuk endDate
-    var formattedDate1 = startDate.getFullYear() + '-' + ('0' + (startDate.getMonth() + 1)).slice(-2) + '-' + ('0' + startDate.getDate()).slice(-2) + ' ' + ('0' + startDate.getHours()).slice(-2) + ':' + ('0' + startDate.getMinutes()).slice(-2) + ':' + ('0' + startDate.getSeconds()).slice(-2);
-  
-    isObject.date = formattedDate1;
-
-
-    checkValidation(dataPet);
+    checkValidation();
 });
 
-function checkValidation(dataPet) {
+function checkValidation() {
+    // console.log($el);
+    isObject["id"] = null
+
+    
     if (
         validationSwalFailed(
-            (isObject["name"] = $("#v-nama").val()),
-            "Nama tidak boleh kosong."
+            (isObject["nta"] = $("#form-nta").val()),
+            "NIM tidak boleh kosong."
         )
     )
         return false;
 
-    if (
-        validationSwalFailed(
-            (isObject["address"] = $("#v-alamat").val()),
-            "Alamat tidak boleh kosong."
+    if (!/^105|109/.test(isObject["nta"])) {
+        errorMessage = 'NTA harus diawali dengan 105 atau 109.';
+        if (
+            validationSwalFailed(
+                (null),
+                errorMessage
+            )
         )
-    )
-        return false;
-    if (
-        validationSwalFailed(
-            (isObject["email"] = $("#v-email").val()),
-            "Email tidak boleh kosong."
-        )
-    )
-        return false;
-
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(isObject["email"])) {
-        validationSwalFailed(
-            null,
-            "Format email tidak valid. Gunakan format: example@example.com"
-        );
-        return false;
-    }
-    if (
-        validationSwalFailed(
-            (isObject["date"]),
-            "Tanggal groomiing tidak boleh kosong."
-        )
-    )
-        return false;
-    // if (
-    //     validationSwalFailed(
-    //         (isObject["phone"] = $("#v-phone").val()),
-    //         "Nama tidak boleh kosong."
-    //     )
-    // )
-    //     return false;
-    isObject["phone"] = $("#v-phone").val();
-    isObject["uid"] = uid;
-
-    console.log(dataPet.length);
-    if (dataPet.length == 0) {
-        if (validationSwalFailed(null, "Pets tidak boleh kosong."))
             return false;
+       
     }
-    isObject["data_pet"] = dataPet;
-    var formData = new FormData();
-    file = null
+    if (
+        validationSwalFailed(
+            (isObject["judul"] = $("#form-judul").val()),
+            "Judul tidak boleh kosong"
+        )
+    )
+        return false;
+    if (
+        validationSwalFailed(
+            (isObject["isi"] = $("#form-isi").val()),
+            "Isi tidak boleh kosong."
+        )
+    )
+        return false;
 
-    if ($('.tipe-bayar').val() == 2) {
-        if (validationSwalFailed($("#formFile")[0].files.length, "File tidak boleh kosong."))
-            return false;
+    isObject["status"] = 10
+    isObject["nama"] = $("#form-nama").val()
 
-
-        file = $("#formFile")[0].files[0];
-
-    }
-    formData.append('image', file);
-
-    formData.append('data', JSON.stringify(isObject));
-
-    saveData(formData);
+    saveData();
 }
 
-function saveData(formData) {
+function saveData() {
+
+    // formdata
+    // console.log(isObject);
+    var formData = new FormData();
+    // var file = $("#form-img")[0].files[0];
+    // formData.append('image', file);
+    formData.append('data', JSON.stringify(isObject));
 
     $.ajax({
         url: baseURL + "/home/saveTransaction",
@@ -656,8 +392,7 @@ function saveData(formData) {
             // Handle response sukses
             if (response.code == 0) {
                 swal("Saved !", response.message, "success").then(function () {
-                    // location.reload();
-                    location.href = baseURL + "/invoice?noinvoice=" + response.data.no_transaction
+                    location.reload();
                 });
                 // Reset form
             } else {
@@ -672,240 +407,23 @@ function saveData(formData) {
     });
 }
 
-async function loadImgContent() {
-    try {
+$("#form-nta").on('input', function() {
+    var value = $(this).val();
+    var errorMessage = '';
 
-        const response = await $.ajax({
-            url: baseURL + "/home/loadGlobal",
-            type: "POST",
-            data: JSON.stringify({ tableName: 'packages' }),
-            dataType: "json",
-            contentType: "application/json",
-            beforeSend: function () {
-                // Swal.fire({
-                //     title: "Loading",
-                //     text: "Please wait...",
-                // });
-            },
-        });
-
-        dataimg = response.data
-
-        el = ``;
-        for (let index = 0; index < dataimg.length; index++) {
-            var path = dataimg[index].file_path;
-            var named = dataimg[index].package_name;
-            var descr = dataimg[index].desc;
-            if (path) {
-
-                el += `<div class="col-xxl-3 col-md-6 box-col-6 card me-3"><figure class="figure pt-3 px-0"><img src='/storage/${path}' class="figure-img img-fluid rounded"><strong>${named}</strong><figcaption class="figure-caption">${descr}</figcaption></figure></div>`
-            } else {
-                el += `<div class="col-xxl-3 col-md-6 box-col-6 card me-3"><figure class="figure pt-3 px-0"><img src='/template/admin2/assets/images/lightgallry/01.jpg' class="figure-img img-fluid rounded"><strong>${named}</strong><figcaption class="figure-caption">${descr}</figcaption></figure></div>`
-            }
-
+    if (value.length > 3) {
+        if (!/^105|109/.test(value)) {
+            errorMessage = 'NTA harus diawali dengan 105 atau 109.';
         }
-
-
-        $("#imgcontent").html(el)
-    } catch (error) {
-        sweetAlert("Oops...", error.responseText, "error");
     }
-}
 
-async function loadPackage(param) {
-    try {
-
-        const response = await $.ajax({
-            url: baseURL + "/home/loadGlobal",
-            type: "POST",
-            data: JSON.stringify({ tableName: 'packages', where: "category = 'GR'" }),
-            dataType: "json",
-            contentType: "application/json",
-            beforeSend: function () {
-                // Swal.fire({
-                //     title: "Loading",
-                //     text: "Please wait...",
-                // });
-            },
-        });
-
-        const res = response.data.map(function (item) {
-            return {
-                id: item.id,
-                text: item.package_name + "-" + item.price,
-            };
-        });
-
-
-
-        $(`#sel-package${param}`).select2({
-            // theme: "bootstrap-5",
-            // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-
-            data: res,
-            placeholder: "Pilih Paket/Layanan",
-            // dropdownParent: $("#modal-data"),
-        });
-        $(`#sel-package${param}`).val("").trigger("change");
-
-    } catch (error) {
-        sweetAlert("Oops...", error.responseText, "error");
-    }
-}
-
-
-async function loadKaryawan(param) {
-    try {
-
-        const response = await $.ajax({
-            url: baseURL + "/home/loadGlobal",
-            type: "POST",
-            data: JSON.stringify({ tableName: 'users', where: "role_id = 8" }),
-            dataType: "json",
-            contentType: "application/json",
-            beforeSend: function () {
-                // Swal.fire({
-                //     title: "Loading",
-                //     text: "Please wait...",
-                // });
-            },
-        });
-
-        const res = response.data.map(function (item) {
-            return {
-                id: item.id,
-                text: item.name,
-            };
-        });
-
-
-
-        $(`#sel-karyawan${param}`).select2({
-            // theme: "bootstrap-5",
-            // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-
-            data: res,
-            placeholder: "Pilih Karyawan",
-            // dropdownParent: $("#modal-data"),
-        });
-        $(`#sel-karyawan${param}`).val("").trigger("change");
-
-    } catch (error) {
-        sweetAlert("Oops...", error.responseText, "error");
-    }
-}
-
-async function loadPet(param) {
-    try {
-
-        const response = await $.ajax({
-            url: baseURL + "/home/loadGlobal",
-            type: "POST",
-            data: JSON.stringify({ tableName: 'pets' }),
-            dataType: "json",
-            contentType: "application/json",
-            beforeSend: function () {
-                // Swal.fire({
-                //     title: "Loading",
-                //     text: "Please wait...",
-                // });
-            },
-        });
-
-        const res = response.data.map(function (item) {
-            return {
-                id: item.pet_name,
-                text: item.pet_name,
-            };
-        });
-
-
-
-        $(`#sel-petitem${param}`).select2({
-            // theme: "bootstrap-5",
-            // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-
-            data: res,
-            placeholder: "Pilih Pet",
-            // dropdownParent: $("#modal-data"),
-        });
-        $(`#sel-petitem${param}`).val("").trigger("change");
-
-    } catch (error) {
-        sweetAlert("Oops...", error.responseText, "error");
-    }
-}
-
-$(".bukti").hide()
-$('.tipe-bayar').on('change', function () {
-    if ($(this).val() == 1) {
-        $(".bukti").hide()
-    } else if ($(this).val() == 2) {
-        $(".bukti").show()
+    if (errorMessage) {
+        if (
+            validationSwalFailed(
+                (null),
+                errorMessage
+            )
+        )
+            return false;
     }
 });
-
-function loadLastTransaction(selectedDates) {
-    valuedate = selectedDates
-    $.ajax({
-        url: baseURL + "/home/loadGlobal",
-        type: "POST",
-        data: JSON.stringify({ tableName: 'transactions', where: "DATE(transaction_start_date) = '" + selectedDates + "' AND transaction_end_date IS NULL" }),
-        beforeSend: function () {
-            // Swal.fire({
-            //     title: "Loading",
-            //     text: "Please wait...",
-            // });
-        },
-        complete: function () { },
-        success: function (response) {
-            // Handle response sukses
-            el = `<option value="09:00-09:30">09:00-09:30</option>
-            <option value="10:00-10:30">10:00-10:30</option>
-            <option value="11:00-11:30">11:00-11:30</option>
-            <option value="12:00-12:30">12:00-12:30</option>
-            <option value="13:00-13:30">13:00-13:30</option>
-            <option value="14:00-14:30">14:00-14:30</option>
-            <option value="15:00-15:30">15:00-15:30</option>
-            <option value="16:00-16:30">16:00-16:00</option>
-            <option value="17:00-17:30">17:00-17:30</option>
-           `
-            $('.tipebayar').html(el)
-
-            if (response.code == 0) {
-                arrtime = response.data
-                for (let index = 0; index < arrtime.length; index++) {
-                    datetimeString = arrtime[index].transaction_start_date;
-                    var timeWithoutSeconds = datetimeString.split(' ')[1].split(':').slice(0, 2).join(':');
-                    if (timeWithoutSeconds === '09:00') {
-                        $('.tipebayar option[value="09:00-09:30"]').remove();
-                    } else if (timeWithoutSeconds === '10:00') {
-                        $('.tipebayar option[value="10:00-10:30"]').remove();
-                    } else if (timeWithoutSeconds === '11:00') {
-                        $('.tipebayar option[value="11:00-11:30"]').remove();
-                    } else if (timeWithoutSeconds === '12:00') {
-                        $('.tipebayar option[value="12:00-12:30"]').remove();
-                    } else if (timeWithoutSeconds === '13:00') {
-                        $('.tipebayar option[value="13:00-13:30"]').remove();
-                    } else if (timeWithoutSeconds === '14:00') {
-                        $('.tipebayar option[value="14:00-14:30"]').remove();
-                    } else if (timeWithoutSeconds === '15:00') {
-                        $('.tipebayar option[value="15:00-15:30"]').remove();
-                    } else if (timeWithoutSeconds === '16:00') {
-                        $('.tipebayar option[value="16:00-16:30"]').remove();
-                    } else if (timeWithoutSeconds === '17:00') {
-                        $('.tipebayar option[value="17:00-17:30"]').remove();
-                    }
-                }
-
-            } else {
-                sweetAlert("Oops...", response.message, "error");
-            }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            // console.log(xhr.responseText);
-            sweetAlert("Oops...", xhr.responseText, "error");
-        },
-    });
-}

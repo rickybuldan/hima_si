@@ -45,10 +45,12 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>NTA / NIM</th>
+                                        <th>NTA</th>
                                         <th>Judul</th>
                                         <th>Status</th>
+                                        <th>Tipe Doc</th>
                                         <th>Isi</th>
+                                        <th>File Upload</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -73,31 +75,67 @@
 
                             <form>
                                 <div class="mb-3 row">
-                                    <label class="col-sm-3 col-form-label">NTA Pengusul / NIM</label>
+                                    <label class="col-sm-3 col-form-label">NTA Pengusul</label>
                                     <div class="col-sm-9">
                                         <input id="form-status" type="hidden" class="form-control" placeholder="NTA">
                                         <input id="form-nta" type="text" class="form-control" placeholder="NTA">
                                     </div>
                                 </div>
-                                 <div class="mb-3 row">
-                                    <label class="col-sm-3 col-form-label">Nama</label>
-                                    <div class="col-sm-9">
-                                        <input id="form-status" type="hidden" class="form-control" placeholder="">
-                                        <input id="form-nama" type="text" class="form-control" placeholder="">
-                                    </div>
-                                </div>
                                 <div class="mb-3 row">
-                                    <label class="col-sm-3 col-form-label">Judul</label>
-                                    <div class="col-sm-9">
-                                        <input id="form-judul" type="text" class="form-control" placeholder="judul">
+                                    <label class="col-sm-3 col-form-label">Ditujukan</label>
+                                    <div class="col-sm-9 mb-0">
+                                        <select class="form-select form-select-sm" id="form-tujuan">
+
+                                        </select>
                                     </div>
                                 </div>
+                                <fieldset class="mb-3">
+                                    <div class="row">
+                                        <label class="col-form-label col-sm-3 pt-0">Tipe Berkas</label>
+                                        <div class="col-sm-9">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="form-type"
+                                                    value="10" checked>
+                                                <label class="form-check-label">
+                                                    Pengajuan
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="form-type"
+                                                    value="20">
+                                                <label class="form-check-label">
+                                                    Laporan
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 <div class="mb-3 row">
-                                    <label class="col-sm-3 col-form-label">Isi</label>
-                                    <div class="col-sm-9">
-                                        <textarea class="form-control" id="form-isi" placeholder="Isi" required=""></textarea>
+                                        <label class="col-sm-3 col-form-label">Judul</label>
+                                        <div class="col-sm-9">
+                                            <input id="form-judul" type="text" class="form-control" placeholder="judul">
+                                        </div>
+                                    </div>
+                                <div class="pengajuan-form">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-3 col-form-label">Isi</label>
+                                        <div class="col-sm-9">
+                                            <textarea class="form-control" id="form-isi" placeholder="Isi" required=""></textarea>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="laporan-form">
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-3 col-form-label">Berkas Program</label>
+                                        <div class="col-sm-9">
+                                            <label for="form-file" id="fileLabel">Choose a file...</label>
+                                            <input id="form-file" type="file" accept="application/pdf"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                 
+
                             </form>
                         </div>
                     </div>
