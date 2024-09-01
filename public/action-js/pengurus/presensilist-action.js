@@ -258,7 +258,7 @@ $("#add-btn").on("click", function (e) {
         $("#form-nta").val("").prop("disabled", false)
 
         if (roleid != 6) {
-            $("#form-nta").val(roleid).prop("disabled", true);
+            $("#form-nta").val(ntaid).prop("disabled", true);
         }
         $("#form-status").val(10)
         $("#form-lokasi").val("").prop("disabled", true);
