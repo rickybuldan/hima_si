@@ -1607,6 +1607,7 @@ class JsonDataController extends Controller
                     $alreadySavedToday = Presensi::whereDate('checkin', '=', $currentTime->toDateString())
                     ->where('nta', $data->nta)
                     ->first();
+
                     if ($data->status == 10) {
                         if ($alreadySavedToday) {
                             $results = [
@@ -1626,29 +1627,39 @@ class JsonDataController extends Controller
                             ]);
                             $saved = $MasterClass->checkErrorModel($createdRecord);
                         }
-                    } else if ($data->status == 20) {
+                    } else{
+
                         if ($alreadySavedToday) {
 
                             $presensi = $alreadySavedToday;
-                            
-                            $checkinTime = new \DateTime($presensi->checkin);
-                            $interval = $checkinTime->diff($currentTime);
-                    
-                            if ($interval->h >= 3) {
+                            if($presensi->status == 10){
+                                $checkinTime = new \DateTime($presensi->checkin);
+                                $interval = $checkinTime->diff($currentTime);
+                               
+                                if ($interval->h >= 3) {
+                                    $updatedRecord = $presensi->update([
+                                        'checkout' => $currentTime,
+                                        'status' => $data->status,
+                                        'lokasi' => $data->lokasi,
+                                    ]);
+                                    $saved = $MasterClass->checkerrorModelUpdate($updatedRecord);
+                                } else {
+                                    $results = [
+                                        'code' => 1,
+                                        'info' => "Checkout dapat dilakukan minimal 3 jam setelah checkin.",
+                                        'data' => []
+                                    ];
+                                    return $MasterClass->Results($results);
+                                }
+                            }else{
                                 $updatedRecord = $presensi->update([
                                     'checkout' => $currentTime,
                                     'status' => $data->status,
                                     'lokasi' => $data->lokasi,
                                 ]);
                                 $saved = $MasterClass->checkerrorModelUpdate($updatedRecord);
-                            } else {
-                                $results = [
-                                    'code' => 1,
-                                    'info' => "Checkout dapat dilakukan minimal 3 jam setelah checkin.",
-                                    'data' => []
-                                ];
-                                return $MasterClass->Results($results);
                             }
+                           
                         } else {
                             $results = [
                                 'code' => 1,
@@ -1657,12 +1668,7 @@ class JsonDataController extends Controller
                             ];
                             return $MasterClass->Results($results);
                         }
-                    } else if ($data->status == 20) {
-                        $updatedRecord = Presensi::where('id', $data->id)->update([
-                            'status' => $data->status,
-                        ]);
-                        $saved = $MasterClass->checkerrorModelUpdate($updatedRecord);
-                    }
+                    } 
 
 
                     $status = $saved;
