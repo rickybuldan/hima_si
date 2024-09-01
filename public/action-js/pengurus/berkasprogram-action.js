@@ -272,7 +272,6 @@ $("#add-btn").on("click", function (e) {
     }
     $("#form-status").val(10)
     $("#form-judul").val("").prop("disabled", false);
-    $("#form-nta").val("").prop("disabled", false)
     $("#form-isi").text("").prop("disabled", false)
     $("#form-nama").val("").prop("disabled", false)
     $("#form-tujuan").val("").prop("disabled", false)
