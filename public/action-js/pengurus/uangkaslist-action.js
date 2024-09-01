@@ -183,7 +183,8 @@ $("#add-btn").on("click", function (e) {
     $("#form-status").val(aspirasi_status)
     isObject = {};
     isObject["id"] = null;
-    $("#form-nta").val("");
+    
+    $("#form-nta").val(ntaid).prop("disabled",true);
     $("#form-nominal").val("");
 
     $("#modal-data").modal("show");
