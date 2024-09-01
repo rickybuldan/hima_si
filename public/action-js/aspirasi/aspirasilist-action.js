@@ -14,7 +14,7 @@ $(document).ready(function () {
 function getListData() {
     wherestate = null
     if (ntaid != 0 && ntaid != 1) {
-        wherestate = "uk.nta ='" + ntaid + "'"
+        wherestate = "nta ='" + ntaid + "'"
     }
     dtpr = $("#table-list").DataTable({
         ajax: {
