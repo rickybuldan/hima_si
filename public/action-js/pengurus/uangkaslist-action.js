@@ -214,7 +214,7 @@ function checkValidation() {
         return false;
 
     isObject["status"] = $("#form-status").val()
-    isObject["expense"] = null
+    isObject["expense"] = 0
 
     saveData();
 }
