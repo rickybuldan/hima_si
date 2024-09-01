@@ -119,7 +119,10 @@ function getListData() {
 let isObject = {};
 
 function editdata(rowData) {
-    isObject = rowData;
+    isObject = {}
+    isObject.id = rowData.id;
+    console.log(isObject);
+    
     setImagePackage(rowData.file_path)
     $("#form-email").val(rowData.email);
     $("#form-password").val();
@@ -187,6 +190,7 @@ function checkValidation() {
     )
 
         return false;
+        
     isObject["password"] = $("#form-password").val();
     isObject["tahun_angkatan"] = $("#form-angkatan").val();
     isObject["nta"] = $("#form-nta").val();

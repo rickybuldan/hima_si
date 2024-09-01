@@ -211,8 +211,15 @@
                     </div>
                 </li> --}}
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
-                    <div class="media profile-media"><img class="b-r-10"
-                            src="{{ asset('template/admin2/assets/images/dashboard/profile.png') }}" alt="">
+                    <div class="media profile-media">
+                        @guest
+                            <img class="b-r-10" src="{{ asset('template/admin2/assets/images/dashboard/profile.png') }}"
+                                alt="">
+                        @endguest
+                        @auth
+                            <img class="b-r-10" style="width: 35px;height: 42px;"
+                                src="/storage/{{ Auth::user()->file_path }}" alt="">
+                        @endauth
                         <div class="media-body">
                             @auth
                                 <span>{{ Auth::user()->name }}</span>
@@ -238,7 +245,13 @@
                         @endauth
 
                         @guest
-                           <li><a href="/login"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-in"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg><span>Log in</span></a></li>
+                            <li><a href="/login"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-in">
+                                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                        <polyline points="10 17 15 12 10 7"></polyline>
+                                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                                    </svg><span>Log in</span></a></li>
                         @endguest
                     </ul>
                 </li>

@@ -427,3 +427,42 @@ $("#form-nta").on('input', function() {
             return false;
     }
 });
+
+showAspirasi()
+function showAspirasi() {
+    $.ajax({
+        url: baseURL + "/home/loadGlobal",
+        type: "POST",
+        data: JSON.stringify({
+            tableName: "setting_aspirasis",
+        }),
+        dataType: "json",
+        contentType: "application/json",
+        beforeSend: function () {
+            // Swal.fire({
+            //     title: "Loading",
+            //     text: "Please wait...",
+            // });
+        },
+        complete: function () {},
+        success: function (response) {
+           
+            if (response.code == 0) {
+              
+                isopen = response.data[0].isopen;
+                if(!isopen){
+                    $(".content-aspirasi").remove()
+                }
+                
+            } else {
+                sweetAlert("Oops...", response.message, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+    
+}

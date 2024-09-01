@@ -83,7 +83,10 @@ function getListData() {
                 mRender: function (data, type, row) {
                     $rowData = ` <span class="badge badge-dark">Checkin</span>`;
                     if (row.status == 20) {
-                        $rowData = ` <span class="badge badge-success">Checkout</span>`;
+                        $rowData = ` <span class="badge badge-warning">Checkout</span>`;
+                    }
+                    if (row.status == 30) {
+                        $rowData = ` <span class="badge badge-success">Validated</span>`;
                     }
                     return $rowData;
                 },
@@ -226,14 +229,17 @@ function editdata(rowData) {
     isObject = rowData;
 
     // setImagePackage(rowData.file_path)
-    
+
     if (rowData.status == 10) {
         aspirasi_status = 10
         $("#save-btn").text("Unvalidated").prop("disabled",true)
     }
     if (rowData.status == 20) {
         aspirasi_status = 30
-        $("#save-btn").text("Validated").prop("disabled",false)
+        if(roleid == 15){
+            $("#save-btn").text("Validated").prop("disabled",false)
+        }
+
     }
     if (rowData.status == 30) {
         aspirasi_status = 30

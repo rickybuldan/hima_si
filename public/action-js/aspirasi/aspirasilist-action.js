@@ -176,11 +176,20 @@ function editdata(rowData) {
     if (rowData.status == 10) {
         aspirasi_status = 20
         $("#save-btn").text("Review")
+        $("#save-btn").prop("disabled", false)
+        if(roleid != 12){
+            $("#save-btn").text("Review").prop("disabled",true)            
+        }
+
     }
 
     if (rowData.status == 20) {
         aspirasi_status = 30
         $("#save-btn").text("Processed")
+        $("#save-btn").prop("disabled", false)
+        if(roleid != 15){
+            $("#save-btn").prop("disabled",true)            
+        }
     }
 
     $("#form-status").val(aspirasi_status)
@@ -209,6 +218,8 @@ $("#add-btn").on("click", function (e) {
 
     $("#modal-data").modal("show");
 });
+
+
 
 $("#save-btn").on("click", function (e) {
     e.preventDefault();
@@ -342,3 +353,87 @@ function saveData() {
         },
     });
 }
+isopen = 0;
+checkShowAspirasi()
+function checkShowAspirasi() {
+    $.ajax({
+        url: baseURL + "/loadGlobal",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            tableName: "setting_aspirasis",
+        }),
+        beforeSend: function () {
+            // Swal.fire({
+            //     title: "Loading",
+            //     text: "Please wait...",
+            // });
+        },
+        complete: function () { },
+        success: function (response) {
+            // Handle response sukses
+            if (response.code == 0) {
+                isopen = response.data[0].isopen;
+                console.log(isopen);
+                if(roleid != 12){
+                    $("#active-btn").remove()
+                }
+                $("#active-btn").text("Active")
+                if(isopen){
+                    $("#active-btn").text("Inactive")
+                }
+            } else {
+                sweetAlert("Oops...", response.message, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+}
+
+
+$("#active-btn").on("click", function (e) {
+    e.preventDefault();
+    isObject={}
+    if(isopen){
+        isObject.isopen = 0
+    }else{
+        isObject.isopen = 1
+    }
+    var formData = new FormData();
+    formData.append('data', JSON.stringify(isObject));
+    $.ajax({
+        url: baseURL + "/setAspirasi",
+        type: "POST",
+        data: formData,
+        dataType: "json",
+        processData: false, 
+        contentType: false,
+        beforeSend: function () {
+            Swal.fire({
+                title: "Loading",
+                text: "Please wait...",
+            });
+        },
+        complete: function () { },
+        success: function (response) {
+            // Handle response sukses
+            if (response.code == 0) {
+                swal("Saved !", response.message, "success").then(function () {
+                    location.reload();
+                });
+                // Reset form
+            } else {
+                sweetAlert("Oops...", response.message, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+});

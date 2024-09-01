@@ -9,6 +9,7 @@ use App\Models\Package;
 
 use App\Models\Pet;
 use App\Models\Presensi;
+use App\Models\SettingAspirasi;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\UangKas;
@@ -841,13 +842,20 @@ class JsonDataController extends Controller
 
                     $whereClause = isset($data->where) ? " WHERE " . $data->where : "";
                     if ($data->tableName == 'users') {
+                        $query = "
+                        SELECT
+                            us.*,
+                            ur.role_name
+                        FROM
+
+                    " . $data->tableName;
                         $query = $query . "  us";
                         $query = $query . "  LEFT JOIN users_roles ur ON us.role_id = ur.id";
                     }
                     if ($whereClause) {
                         $query = $query . " WHERE " . $data->where;
                     }
-
+       
                     
 
                     $saved = DB::select($query);
@@ -1228,16 +1236,22 @@ class JsonDataController extends Controller
 
                     $image = $request->file('image');
                     $imagePath = null;
-
+                    $data = json_decode($request->input('data'));
                     if ($image) {
                         $imagePath = $image->store('images', 'public');
-                    }
-
-                    $data = json_decode($request->input('data'));
+                    }else{
+                        if($data->id){
+                            $berkasProgram = User::find($data->id);
+                      
+                            if (!$imagePath && $berkasProgram) {
+                                $imagePath = $berkasProgram->file_path ?? null;
+                            }
+                        }
+                    }                   
 
                     $status = [];
                     if ($data->password) {
-
+                        
                         $saved = User::updateOrCreate(
                             [
                                 'id' => $data->id,
@@ -1246,17 +1260,16 @@ class JsonDataController extends Controller
                                 'name' => $data->name,
                                 'email' => $data->email,
                                 'role_id' => $data->role_id,
-                                'password' => Hash::make($data->password),
+                                // 'password' => Hash::make($data->password),
                                 'is_active' => $data->is_active,
                                 'nta' => $data->nta,
-                                'file_path' => $imagePath ?? $data->file_path,
+                                'file_path' => $imagePath,
                                 'tahun_angkatan' => $data->tahun_angkatan,
                                 'kelas' => $data->kelas,
                             ] // Kolom yang akan diisi
                         );
 
                     } else {
-
                         $saved = User::updateOrCreate(
                             [
                                 'id' => $data->id,
@@ -1670,6 +1683,77 @@ class JsonDataController extends Controller
                         }
                     } 
 
+
+                    $status = $saved;
+
+                    if ($status['code'] == $MasterClass::CODE_SUCCESS) {
+                        DB::commit();
+                    } else {
+                        DB::rollBack();
+                    }
+
+                    $results = [
+                        'code' => $status['code'],
+                        'info' => $status['info'],
+                        'data' => $status['data'],
+                    ];
+
+
+
+                } else {
+                    $results = [
+                        'code' => '103',
+                        'info' => "Method Failed",
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Roll back the transaction in case of an exception
+                $results = [
+                    'code' => '102',
+                    'info' => $e->getMessage(),
+                ];
+
+            }
+        } else {
+
+            $results = [
+                'code' => '403',
+                'info' => "Unauthorized",
+            ];
+
+        }
+
+        return $MasterClass->Results($results);
+
+    }
+    public function setAspirasi(Request $request)
+    {
+        $MasterClass = new Master();
+
+        $checkAuth = $MasterClass->Authenticated($MasterClass->getSession('user_id'));
+
+        if ($checkAuth['code'] == $MasterClass::CODE_SUCCESS) {
+            try {
+                if ($request->isMethod('post')) {
+
+                    DB::beginTransaction();
+
+                    $data = json_decode($request->input('data'));
+
+                    $status = [];
+
+                    $data->id = 1;
+                    $saved = SettingAspirasi::updateOrCreate(
+                        [
+                            'id' => $data->id,
+                        ],
+                        [
+                            'isopen' => $data->isopen,
+
+                        ] 
+                    );
+
+                    $saved = $MasterClass->checkErrorModel($saved);
 
                     $status = $saved;
 

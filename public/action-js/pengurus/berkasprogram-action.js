@@ -85,7 +85,10 @@ function getListData() {
                     if (row.status == 20) {
                         $rowData = ` <span class="badge badge-success">Validated</span>`;
                     }
-                    
+                    if (row.status == 30) {
+                        $rowData = ` <span class="badge badge-danger">Canceled</span>`;
+                    }
+
                     return $rowData;
                 },
                 visible: true,
@@ -119,11 +122,16 @@ function getListData() {
                 targets: 6,
                 className: "text-center",
             },
-         
+
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    if(row.status ==10 && roleid== 15){
+                        $rowData += `<button type="button" class="btn btn-danger btn-sm batal-btn"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+                    }
+                    // $rowData += `<button type="button" class="btn btn-danger btn-sm batal-btn"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+                    
+                    // $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
                     return $rowData;
                 },
                 visible: true,
@@ -142,6 +150,17 @@ function getListData() {
                     var tr = $(this).closest("tr");
                     var rowData = dtpr.row(tr).data();
                     editdata(rowData);
+                });
+            $(rows)
+                .find(".batal-btn")
+                .on("click", function () {
+                    var tr = $(this).closest("tr");
+                    var rowData = dtpr.row(tr).data();
+                    isObject = rowData
+                    isObject.status = 30
+                    isObject.tujuan = rowData.nta_tujuan
+                    isObject.isi = rowData.s_text
+                    saveData()
                 });
             $(rows)
                 .find(".delete-btn")
@@ -199,17 +218,21 @@ function editdata(rowData) {
     isObject = rowData;
 
     // setImagePackage(rowData.file_path)
-    $("#save-btn").prop("disabled",false)
+    $("#save-btn").prop("disabled", false)
     aspirasi_status = 10;
     $("#save-btn").text("Review")
 
     if (rowData.status == 10) {
         aspirasi_status = 20
+        $("#save-btn").prop("disabled", false)
+        if (roleid != 15) {
+            $("#save-btn").prop("disabled", true)
+        }
         $("#save-btn").text("Review")
     }
 
     if (rowData.status == 20) {
-        $("#save-btn").prop("disabled",true)
+        $("#save-btn").prop("disabled", true)
     }
     let $el = $("input:radio[name='form-type'][value='" + rowData.type_doc + "']");
     $el.prop("checked", true).prop("disabled", true);
@@ -222,7 +245,11 @@ function editdata(rowData) {
         $(".laporan-form").show();
         $(".pengajuan-form").hide();
     }
-    
+
+    if (rowData.status == 30) {
+        $("#save-btn").text("Canceled").prop("disabled", true)
+    }
+
     if (rowData.file_path) {
         $('#fileLabel').text('File exists: ' + rowData.file_path.split('/').pop());
         $('#form-file').prop('disabled', true);
@@ -232,22 +259,20 @@ function editdata(rowData) {
 
     $('#form-file').prop('disabled', true);
 
-    if (rowData.status == 10  && rowData.type_doc == 10) {
+    if (rowData.status == 10 && rowData.type_doc == 10) {
         aspirasi_status = 20
         $('#form-file').prop('disabled', false);
         $("#save-btn").text("Validated")
         $(".laporan-form").show();
         $(".pengajuan-form").hide();
     }
-    if (rowData.status == 20  && rowData.type_doc == 10) {
+    if (rowData.status == 20 && rowData.type_doc == 10) {
         aspirasi_status = 20
         $('#form-file').prop('disabled', false);
         $("#save-btn").text("Validated")
         $(".laporan-form").show();
         $(".pengajuan-form").show();
     }
-
-
 
     $("#form-status").val(aspirasi_status)
     $("#form-judul").val(rowData.judul).prop("disabled", true);
@@ -264,12 +289,14 @@ $("#add-btn").on("click", function (e) {
     isObject = {};
     isObject["id"] = null;
     $("#form-nta").val("").prop("disabled", false)
-    let $el = $("input:radio[name='form-type'][value='" +10+ "']");
+    let $el = $("input:radio[name='form-type'][value='" + 10 + "']");
     $el.prop("checked", true).prop("disabled", false);
-    
+
     if (roleid != 6) {
         $("#form-nta").val(ntaid).prop("disabled", true);
     }
+
+    $('#fileLabel').text('Choose files...');
     $("#form-status").val(10)
     $("#form-judul").val("").prop("disabled", false);
     $("#form-isi").text("").prop("disabled", false)
@@ -289,7 +316,7 @@ $(".pengajuan-form").show();
 $("input:radio[name='form-type']").change(function () {
     let $el = $("input:radio[name='form-type']:checked").val();
     console.log($el);
-    
+
     if ($el == 10) {
         $(".pengajuan-form").show();
         $(".laporan-form").hide();

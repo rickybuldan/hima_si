@@ -166,37 +166,39 @@
             </div>
         </div>
     </div>
-    <section class=" text-center container">
-        <div class="row">
-            <div class="col-lg-6 col-md-8 mx-auto">
-                <h3 class="fw-light">Aspirasi</h3>
+    <div class="content-aspirasi">
+        <section class=" text-center container">
+            <div class="row">
+                <div class="col-lg-6 col-md-8 mx-auto">
+                    <h3 class="fw-light">Aspirasi</h3>
+                </div>
             </div>
-        </div>
-    </section>
-    <div class="p-5">
-        <div class="mb-3 row">
+        </section>
+        <div class="p-5">
+            <div class="mb-3 row">
+                <div class="col-sm-3">
+                    <input id="form-status" type="hidden" class="form-control" placeholder="NTA">
+                    <input id="form-nta" type="text" class="form-control" placeholder="NIM">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-sm-3">
+                    <input id="form-nama" type="text" class="form-control" placeholder="Nama">
+                </div>
+            </div>
+            <div class="mb-3 row">
 
-            <div class="col-sm-3">
-                <input id="form-status" type="hidden" class="form-control" placeholder="NTA">
-                <input id="form-nta" type="text" class="form-control" placeholder="NIM">
+                <div class="col-sm-3">
+                    <input id="form-judul" type="text" class="form-control" placeholder="Judul">
+                </div>
             </div>
-        </div>
-        <div class="mb-3 row">
-            <div class="col-sm-3">
-                <input id="form-nama" type="text" class="form-control" placeholder="Nama">
+            <textarea class="form-control" id="form-isi" placeholder="Isi aspirasi" rows="5"></textarea>
+            <div class="text-start mt-3">
+                <a class="btn btn-primary" id="save-btn">Simpan aspirasi</a>
             </div>
-        </div>
-        <div class="mb-3 row">
-
-            <div class="col-sm-3">
-                <input id="form-judul" type="text" class="form-control" placeholder="Judul">
-            </div>
-        </div>
-        <textarea class="form-control" id="form-isi" placeholder="Isi aspirasi" rows="5"></textarea>
-        <div class="text-start mt-3">
-            <a class="btn btn-primary" id="save-btn">Simpan aspirasi</a>
         </div>
     </div>
+
     {{-- 
     <div id="contact-kimi" class="row p-5">
         <div class="col-xl-3 col-lg-3 col-md-6">

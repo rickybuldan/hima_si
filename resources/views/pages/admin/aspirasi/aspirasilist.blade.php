@@ -35,7 +35,7 @@
                                 <h5>{{ $subtitle }}</h5>
                             </div>
                             <div class="p-2">
-                                <a class="btn btn-primary" id="add-btn"><i class="fa fa-plus"></i> Tambah</a>
+                                <a class="btn btn-primary" id="active-btn"><i class="fa fa-plus"></i> Set Aktif</a>
                             </div>
                         </div>
                     </div>

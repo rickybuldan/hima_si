@@ -151,7 +151,11 @@ function editdata(rowData) {
 
     if (rowData.status == 10) {
         aspirasi_status = 20
+
         $("#save-btn").text("Validating").prop("disabled",false)
+        if (roleid != 15) {
+            $("#save-btn").prop("disabled", true)
+        }
     }
     if (rowData.status == 20) {
         aspirasi_status = 20
