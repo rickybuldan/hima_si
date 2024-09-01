@@ -167,7 +167,7 @@ function editdata(rowData) {
     }
 
     setImagePackage(rowData.file_path)
-    $("#form-nta").val(rowData.ntaid).prop("disabled",true);
+    $("#form-nta").val(rowData.nta).prop("disabled",true);
     $("#form-nominal").val(formatRupiah(rowData.nominal));
     $("#form-status").val(aspirasi_status)
 
@@ -183,7 +183,7 @@ $("#add-btn").on("click", function (e) {
     $("#form-status").val(aspirasi_status)
     isObject = {};
     isObject["id"] = null;
-    
+
     $("#form-nta").val(ntaid).prop("disabled",true);
     $("#form-nominal").val("");
 
