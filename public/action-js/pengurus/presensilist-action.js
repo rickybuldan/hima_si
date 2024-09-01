@@ -427,7 +427,7 @@ function saveData() {
 
 const unikomLatitude = -6.8894;
 const unikomLongitude = 107.6100;
-const distanceThreshold = 100000;
+const distanceThreshold = 300;
 
 function getLocation() {
     Swal.fire({
@@ -472,7 +472,7 @@ function showPosition(position) {
         "<br>Distance from UNIKOM: " + distance.toFixed(2) + " meters"
 
     if (distance > distanceThreshold) {
-        sweetAlert("Oops...", "You are far from UNIKOM.", "error");
+        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than "+distanceThreshold, "error");
         $("#save-btn").prop("disabled", true)
         return false;
     }
