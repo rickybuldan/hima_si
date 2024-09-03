@@ -342,8 +342,20 @@ function checkValidation() {
             )
         )
             return false;
-       
     }
+
+    if (isObject["nta"].length != 8) {
+        errorMessage = 'NTA harus 8 digit';
+        if (
+            validationSwalFailed(
+                (null),
+                errorMessage
+            )
+        )
+            return false;
+    }
+
+
     if (
         validationSwalFailed(
             (isObject["email"] = $("#form-email").val()),

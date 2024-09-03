@@ -9,5 +9,5 @@ class BerkasProgram extends Model
 {
     use HasFactory;
     // protected $table = "obat";
-    protected $fillable = ['nta','judul','s_text','nta_tujuan','file_path','type_doc','status'];
+    protected $fillable = ['nta','judul','s_text','nta_tujuan','file_path','type_doc','status','berkas_kategori'];
 }

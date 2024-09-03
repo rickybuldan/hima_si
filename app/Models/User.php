@@ -28,7 +28,8 @@ class User extends Authenticatable
         'file_path',
         'tahun_angkatan',
         'kelas',
-        'nta'
+        'nta',
+        'divisi'
     ];
 
     /**

@@ -347,7 +347,7 @@ class GeneralController extends Controller
             $varJs = [
                 'const baseURL = "' . $baseURL . '"',
                 'const roleid  = '. $MasterClass->getSession('role_id'),
-                'const ntaid  = '. $MasterClass->getSession('nta')
+                'const ntaid  = '. $MasterClass->getSession('nta'),
                 
             ];
 

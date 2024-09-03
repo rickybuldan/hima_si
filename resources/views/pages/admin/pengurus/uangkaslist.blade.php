@@ -51,6 +51,7 @@
                                         <th>Nominal</th>
                                         <th>Bukti Transaksi</th>
                                         <th>Status</th>
+                                        <th>Minggu Ke</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>

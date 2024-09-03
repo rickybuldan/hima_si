@@ -49,6 +49,7 @@
                                         <th>Nominal</th>
                                         <th>Bukti Transaksi</th>
                                         <th>Status</th>
+                                        <th>Deskripsi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -87,6 +88,13 @@
                                         class="form-control" placeholder="nominal">
                                 </div>
                             </div>
+                            <div class="mb-3 row">
+                                <label class="col-sm-3 col-form-label">Deskripsi</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" id="form-deskripsi" placeholder="Isi aspirasi" rows="5"></textarea>
+                                </div>
+                            </div>
+
                             <div class="mb-3 row">
                                 <label class="col-sm-3 col-form-label">Bukti Pengeluaran</label>
                                 <div class="col-sm-9">

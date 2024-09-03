@@ -187,6 +187,9 @@ class Master
             else if($param == "nta"){
                 $seskey = Session::get('nta');
             } 
+            else if($param == "divisi"){
+                $seskey = Session::get('divisi');
+            } 
         }
 
 

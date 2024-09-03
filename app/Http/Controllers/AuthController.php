@@ -51,6 +51,7 @@ class AuthController extends Controller
                 Session::put('name', Auth::user()->name);
                 Session::put('role_id', Auth::user()->role_id);
                 Session::put('nta', Auth::user()->nta);
+                Session::put('divisi', Auth::user()->divisi);
     
                 // Redirect berdasarkan peran pengguna
                 if (Auth::user()->roles->first()->role_name == "Customer") {

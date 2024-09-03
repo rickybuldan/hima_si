@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UangKas extends Model
+class Divisi extends Model
 {
     use HasFactory;
-    // protected $table = "obat";
-    protected $fillable = ['nta','nominal','file_path','status','expense','deskripsi'];
+    protected $table = "divisi";
+    protected $fillable = ['nm_divisi','hari_piket'];
 }

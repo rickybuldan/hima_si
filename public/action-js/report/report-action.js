@@ -16,7 +16,7 @@ function getListData() {
             data: function (d) {
                 return JSON.stringify({
                     tableName: "uang_kas",
-                    where: `DATE_FORMAT(created_at, '%Y-%m') = '${month}'`
+                    where: `DATE_FORMAT(uk.created_at, '%Y-%m') = '${month}'`
                 });
             },
             dataSrc: function (response) {
@@ -90,6 +90,7 @@ function getListData() {
             { data: "nominal" },
             { data: "file_path" },
             { data: "status" },
+            { data: "deskripsi" },
 
         ],
         columnDefs: [
@@ -101,12 +102,12 @@ function getListData() {
 
                     if ($rowData) {
                         $rowData = formatRupiah(parseInt($rowData))
-                        if(row.expense){
+                        if (row.expense) {
                             $rowData += `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
                                             <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
                                             <polyline points="17 18 23 18 23 12"></polyline>
-                                        </svg>` 
-                        }else{
+                                        </svg>`
+                        } else {
                             $rowData += `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
                                             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                                             <polyline points="17 6 23 6 23 12"></polyline>
@@ -164,17 +165,17 @@ function getListData() {
             totalPendapatan.className = 'badge badge-info my-1';
             totalPendapatan.id = 'total-saldo';
             totalPendapatan.textContent = 'Saldo: 0'; // Set initial text
-        
+
             var totalPengeluaran = document.createElement('span');
             totalPengeluaran.className = 'badge badge-danger my-1';
             totalPengeluaran.id = 'total-pengeluaran';
             totalPengeluaran.textContent = 'Total Pengeluaran: 0'; // Set initial text
-        
+
             var totalPemasukan = document.createElement('span');
             totalPemasukan.className = 'badge badge-success my-1';
-            totalPemasukan.id = 'total-pemasukan';
+            totalPemasukan.id = 'total-pendapatan';
             totalPemasukan.textContent = 'Total Pemasukan: 0'; // Set initial text
-        
+
             // Append the spans to the '.dt-buttons'
             $('.dt-buttons').append(totalPendapatan);
             $('.dt-buttons').append(totalPengeluaran);
@@ -216,19 +217,20 @@ function getListData() {
 
             // Calculate totals for specific columns
             var totalExpense = api.rows().data().reduce(function (sum, row) {
-                return sum + (row.expense ? parseInt(row.nominal) : 0);
+                return sum + (row.expense !== 0 ? parseInt(row.nominal) : 0);
             }, 0);
-    
+
             var totalRevenue = api.rows().data().reduce(function (sum, row) {
-                return sum + (!row.expense ? parseInt(row.nominal) : 0);
+                return sum + (row.expense === 0 ? parseInt(row.nominal) : 0);
             }, 0);
-    
+
             var totalMoney = totalRevenue - totalExpense;
-    
+            console.log(totalRevenue);
+
             // Format the totals and update the input fields
-            $("#total-pendapatan").text("Total Pemasukan:"+formatRupiah(totalRevenue));
-            $("#total-pengeluaran").text("Total Pengeluaran:"+formatRupiah(totalExpense));
-            $("#total-saldo").text("Saldo:"+formatRupiah(totalMoney));
+            $("#total-pendapatan").text("Total Pemasukan:" + formatRupiah(totalRevenue));
+            $("#total-pengeluaran").text("Total Pengeluaran:" + formatRupiah(totalExpense));
+            $("#total-saldo").text("Saldo:" + formatRupiah(totalMoney));
 
             $(rows)
                 .find(".done-btn")
@@ -469,8 +471,18 @@ function checkValidation() {
     )
         return false;
 
+    if (
+        validationSwalFailed(
+            (isObject["deskripsi"] = $("#form-deskripsi").val()),
+            "Deskripsi tidak boleh kosong."
+        )
+    )
+        return false;
+
     isObject["status"] = $("#form-status").val()
     isObject["expense"] = 1
+    console.log(isObject);
+    
 
     saveData();
 }

@@ -47,6 +47,8 @@
                                         <th>No</th>
                                         <th>NTA</th>
                                         <th>Nama</th>
+                                        <th>Kategori</th>
+
                                         <th>Judul</th>
                                         <th>Status</th>
                                         <th>Tipe Doc</th>
@@ -86,6 +88,14 @@
                                     <label class="col-sm-3 col-form-label">Ditujukan</label>
                                     <div class="col-sm-9 mb-0">
                                         <select class="form-select form-select-sm" id="form-tujuan">
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Kategori Berkas</label>
+                                    <div class="col-sm-9 mb-0">
+                                        <select class="form-select form-select-sm" id="form-kategori">
 
                                         </select>
                                     </div>

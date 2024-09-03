@@ -119,6 +119,14 @@
                                         </select>
                                     </div>
                                 </div>
+                                 <div class="mb-3 row">
+                                    <label class="col-sm-3 col-form-label">Divisi</label>
+                                    <div class="col-sm-9 mb-0">
+                                        <select class="form-select form-select-sm" id="form-divisi">
+
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">NTA</label>
                                     <div class="col-sm-9">

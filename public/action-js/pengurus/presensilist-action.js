@@ -1,13 +1,57 @@
-let dtpr;
+let dtpr,dtpr_piket;
 
 $(document).ready(function () {
     $(".js-example-basic-single").select2({
         dropdownParent: $("#modal-data"),
-        placeholder: "Pilih Kategori",
+        placeholder: "Pilih Hari",
     });
     getListData();
+    getListDataJadwal()
 });
 
+
+showAspirasi()
+function showAspirasi() {
+    $.ajax({
+        url: baseURL + "/loadGlobal",
+        type: "POST",
+        data: JSON.stringify({
+            tableName: "divisi",
+            where:"u.nta ='"+ntaid+"'"
+        }),
+
+        dataType: "json",
+        contentType: "application/json",
+        beforeSend: function () {
+            // Swal.fire({
+            //     title: "Loading",
+            //     text: "Please wait...",
+            // });
+        },
+        complete: function () {},
+        success: function (response) {
+           
+            if (response.code == 0) {
+              
+                isopen = response.data[0].hari_piket;
+                if(isopen){
+                    $(".notice-piket").text("Anda Piket Setiap Hari "+isopen)
+                }else{
+                    $(".notice-piket").empty()
+                }
+                
+            } else {
+                sweetAlert("Oops...", response.message, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+    
+}
 
 // console.log(roleid);
 
@@ -188,6 +232,164 @@ function getListData() {
     });
 }
 
+function getListDataJadwal() {
+    dtpr_piket = $("#table-list-piket").DataTable({
+        ajax: {
+            url: baseURL + "/loadGlobal",
+            type: "POST",
+            contentType: "application/json", // Set content type to JSON
+            data: function (d) {
+                return JSON.stringify({
+                    tableName: "divisi",
+                });
+            },
+            dataSrc: function (response) {
+                if (response.code == 0) {
+                    es = response.data;
+                    // console.log(es);
+
+                    return response.data;
+                } else {
+                    return response;
+                }
+            },
+            complete: function () {
+                // loaderPage(false);
+            },
+        },
+        language: {
+            oPaginate: {
+                sFirst: "First",
+                sLast: "Last",
+                sNext: ">",
+                sPrevious: "<",
+            },
+        },
+        columns: [
+            {
+                data: "id",
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                },
+            },
+            { data: "nm_divisi" },
+            { data: "hari_piket" },
+            { data: "id" },
+        ],
+        columnDefs: [
+            // {
+            //     mRender: function (data, type, row) {
+            //         $rowData = "";
+            //         if (row.category == "GR") {
+            //             $rowData = "Grooming";
+            //         }
+            //         if (row.category == "PN") {
+            //             $rowData = "Penitipan";
+            //         }
+            //         return $rowData;
+            //     },
+            //     visible: true,
+            //     targets: 2,
+            //     className: "text-center",
+            // },
+            {
+                mRender: function (data, type, row) {
+                    $rowData = "No Action Availabel"
+                    if(roleid == 15){
+                        $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
+                        // $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
+                    }
+
+                    return $rowData;
+                },
+                visible: true,
+                targets: 3,
+                className: "text-center",
+            },
+        ],
+        drawCallback: function (settings) {
+            var api = this.api();
+            var rows = api.rows({ page: "current" }).nodes();
+            var last = null;
+
+            $(rows)
+                .find(".edit-btn")
+                .on("click", function () {
+                    var tr = $(this).closest("tr");
+                    var rowData = dtpr_piket.row(tr).data();
+                    editdatapiket(rowData);
+                });
+            $(rows)
+                .find(".delete-btn")
+                .on("click", function () {
+                    var tr = $(this).closest("tr");
+                    var rowData = dtpr_piket.row(tr).data();
+                    deleteData(rowData);
+                });
+        },
+    });
+}
+
+
+function editdatapiket(rowData) {
+    isObject = {}
+    isObject = rowData;
+
+    $("#form-divisi").val(rowData.nm_divisi).prop("disabled", true);
+    $("#form-hari").val(rowData.hari_piket).trigger("change");
+
+    $("#modal-data-piket").modal("show");
+}
+
+
+$("#save-btn-piket").on("click", function (e) {
+    e.preventDefault();
+    
+    isObject.hari_piket = $("#form-hari").val()
+    savePiket();
+});
+
+function savePiket() {
+
+    // formdata
+    // console.log(isObject);
+    var formData = new FormData();
+    // var file = $("#form-img")[0].files[0];
+    // formData.append('image', file);
+    formData.append('data', JSON.stringify(isObject));
+
+    $.ajax({
+        url: baseURL + "/saveDivisi",
+        type: "POST",
+        data: formData,
+        dataType: "json",
+        processData: false, // Important: prevent jQuery from automatically processing the data
+        contentType: false,
+        beforeSend: function () {
+            Swal.fire({
+                title: "Loading",
+                text: "Please wait...",
+            });
+        },
+        complete: function () { },
+        success: function (response) {
+            // Handle response sukses
+            if (response.code == 0) {
+                swal("Saved !", response.message, "success").then(function () {
+                    location.reload();
+                });
+                // Reset form
+            } else {
+                sweetAlert("Oops...", response.info, "error");
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            // console.log(xhr.responseText);
+            sweetAlert("Oops...", xhr.responseText, "error");
+        },
+    });
+}
 function setImagePackage(urlFile) {
     console.log(urlFile);
     $(".img-paket").prop("src", null)

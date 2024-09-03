@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aspirasi;
 use App\Models\BerkasProgram;
+use App\Models\Divisi;
 use App\Models\House;
 use App\Models\Package;
 
@@ -841,17 +842,19 @@ class JsonDataController extends Controller
                     " . $data->tableName;
 
                     $whereClause = isset($data->where) ? " WHERE " . $data->where : "";
-                    
+                  
                     if ($data->tableName == 'berkas_programs') {
                         $query = "
                         SELECT
                             uk.*,
-                            us.name
+                            us.name,
+                            kb.nm_kategori
                         FROM
 
                     " . $data->tableName;
                         $query = $query . "  uk";
                         $query = $query . "  LEFT JOIN users us ON us.nta = uk.nta";
+                        $query = $query . "  LEFT JOIN kategori_berkas kb ON kb.id = uk.kategori_berkas";
                     }
                     if ($data->tableName == 'presensis') {
                         $query = "
@@ -887,11 +890,34 @@ class JsonDataController extends Controller
                         $query = $query . "  us";
                         $query = $query . "  LEFT JOIN users_roles ur ON us.role_id = ur.id";
                     }
-                    if ($whereClause) {
-                        $query = $query . " WHERE " . $data->where;
+
+                    if (isset($data->group) && $data->group){
+                        $query = " SELECT
+                                    uk.*,
+                                    us.name,
+                                    us.nta,
+                                    (
+                                        SELECT COUNT(*)
+                                        FROM uang_kas uk_sub
+                                        WHERE uk_sub.nta = uk.nta
+                                        AND uk_sub.expense = 0
+                                        AND uk_sub.created_at <= uk.created_at
+                                    ) AS transaksi_ke
+                                FROM
+                                    uang_kas uk
+                                LEFT JOIN
+                                    users us ON us.nta = uk.nta;";
                     }
-       
-                    
+                   
+                    if ($whereClause) {
+                        if ($data->tableName == 'divisi') {
+                            $query = "SELECT * FROM users u left join divisi d ON d.id=u.divisi";
+                        }
+                     
+                        $query = $query . " WHERE " . $data->where;
+                        
+                        
+                    }             
 
                     $saved = DB::select($query);
                     $saved = $MasterClass->checkErrorModel($saved);
@@ -1301,6 +1327,7 @@ class JsonDataController extends Controller
                                 'file_path' => $imagePath,
                                 'tahun_angkatan' => $data->tahun_angkatan,
                                 'kelas' => $data->kelas,
+                                'divisi' => $data->divisi,
                             ] // Kolom yang akan diisi
                         );
 
@@ -1317,6 +1344,7 @@ class JsonDataController extends Controller
                                 'file_path' => $imagePath ?? $data->file_path,
                                 'tahun_angkatan' => $data->tahun_angkatan,
                                 'kelas' => $data->kelas,
+                                'divisi' => $data->divisi,
                             ] // Kolom yang akan diisi
                         );
 
@@ -1485,7 +1513,7 @@ class JsonDataController extends Controller
                             'type_doc' => $data->type_doc,
                             'judul' => $data->judul,
                             'file_path' => $filePath,
-                            
+                            'kategori_berkas' => $data->kategori_berkas,
                             's_text' => $data->isi,
                             'status' => $data->status,
                         ]
@@ -1584,7 +1612,8 @@ class JsonDataController extends Controller
                             'nta' => $data->nta,
                             'file_path' => $imagePath,
                             'status' => $data->status,
-                            'expense' => $data->expense
+                            'expense' => $data->expense,
+                            'deskripsi' => $data->deskripsi
 
                         ] 
                     );
@@ -1761,6 +1790,74 @@ class JsonDataController extends Controller
         return $MasterClass->Results($results);
 
     }
+
+    public function saveDivisi(Request $request)
+    {
+        $MasterClass = new Master();
+
+        $checkAuth = $MasterClass->Authenticated($MasterClass->getSession('user_id'));
+
+        if ($checkAuth['code'] == $MasterClass::CODE_SUCCESS) {
+            try {
+                if ($request->isMethod('post')) {
+
+                    DB::beginTransaction();
+
+                    $data = json_decode($request->input('data'));
+
+                    $status = [];
+                    $currentTime = now();
+                
+                    $alreadySavedToday = Divisi::find($data->id);
+
+                    $updatedRecord = $alreadySavedToday->update([
+                        'hari_piket' => $data->hari_piket,
+                    ]);
+                    $saved = $MasterClass->checkerrorModelUpdate($updatedRecord);
+
+                    $status = $saved;
+
+                    if ($status['code'] == $MasterClass::CODE_SUCCESS) {
+                        DB::commit();
+                    } else {
+                        DB::rollBack();
+                    }
+
+                    $results = [
+                        'code' => $status['code'],
+                        'info' => $status['info'],
+                        'data' => $status['data'],
+                    ];
+
+
+
+                } else {
+                    $results = [
+                        'code' => '103',
+                        'info' => "Method Failed",
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Roll back the transaction in case of an exception
+                $results = [
+                    'code' => '102',
+                    'info' => $e->getMessage(),
+                ];
+
+            }
+        } else {
+
+            $results = [
+                'code' => '403',
+                'info' => "Unauthorized",
+            ];
+
+        }
+
+        return $MasterClass->Results($results);
+
+    }
+
     public function setAspirasi(Request $request)
     {
         $MasterClass = new Master();

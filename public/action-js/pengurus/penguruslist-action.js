@@ -4,19 +4,20 @@ let dtpr;
 
 $(document).ready(function () {
     getListData();
+    
 });
 
 function getListData() {
-     wherestate = "nta !='0'"
+    wherestate = "nta !='0'"
 
-     if (roleid == 6 || roleid == 14 || roleid == 15) {
+    if (roleid == 6 || roleid == 14 || roleid == 15) {
         wherestate = null
     }
     dtpr = $("#table-list").DataTable({
         ajax: {
             url: baseURL + "/loadGlobal",
             type: "POST",
-            contentType: "application/json", 
+            contentType: "application/json",
             data: function (d) {
                 return JSON.stringify({
                     tableName: "users",
@@ -86,7 +87,7 @@ function getListData() {
                 visible: true,
                 targets: 5,
                 className: "text-center",
-                orderable:false
+                orderable: false
             },
         ],
         drawCallback: function (settings) {
@@ -111,10 +112,13 @@ function getListData() {
         },
         initComplete: function () {
             loadRole()
+            loadDivisi()
         },
-        
+
     });
 }
+
+
 
 let isObject = {};
 
@@ -122,7 +126,7 @@ function editdata(rowData) {
     isObject = {}
     isObject.id = rowData.id;
     console.log(isObject);
-    
+
     setImagePackage(rowData.file_path)
     $("#form-email").val(rowData.email);
     $("#form-password").val();
@@ -131,6 +135,7 @@ function editdata(rowData) {
     $("#form-nta").val(rowData.nta);
     $("#form-angkatan").val(rowData.tahun_angkatan);
     $("#form-role").val(rowData.role_id).trigger("change");
+    $("#form-divisi").val(rowData.divisi).trigger("change");
 
     let $el = $("input:radio[name=form-status]");
 
@@ -148,6 +153,7 @@ $("#add-btn").on("click", function (e) {
     $("#form-password").val("");
     $("#form-name").val("");
     $("#form-role").val("").trigger("change");
+    $("#form-divisi").val("").trigger("change");
     $("input:radio[name=form-status]").prop("checked", false);
     $("#modal-data").modal("show");
 });
@@ -190,7 +196,15 @@ function checkValidation() {
     )
 
         return false;
-        
+    if (
+        validationSwalFailed(
+            (isObject["divisi"] = $("#form-divisi").val()),
+            "Please choose a divisi."
+        )
+    )
+
+        return false;
+
     isObject["password"] = $("#form-password").val();
     isObject["tahun_angkatan"] = $("#form-angkatan").val();
     isObject["nta"] = $("#form-nta").val();
@@ -201,7 +215,7 @@ function checkValidation() {
 
 
 function deleteData(data) {
-  
+
     swal({
         title: "Are you sure to delete ?",
         text: "You will not be able to recover this imaginary data !!",
@@ -227,7 +241,7 @@ function deleteData(data) {
                     //     text: "Please wait...",
                     // });
                 },
-                complete: function () {},
+                complete: function () { },
                 success: function (response) {
                     // Handle response sukses
                     if (response.code == 0) {
@@ -272,14 +286,14 @@ function saveData() {
         data: formData,
         dataType: "json",
         processData: false, // Important: prevent jQuery from automatically processing the data
-        contentType: false, 
+        contentType: false,
         beforeSend: function () {
             Swal.fire({
                 title: "Loading",
                 text: "Please wait...",
             });
         },
-        complete: function () {},
+        complete: function () { },
         success: function (response) {
             // Handle response sukses
             if (response.code == 0) {
@@ -323,7 +337,44 @@ async function loadRole() {
         $("#form-role").select2({
             // theme: "bootstrap-5",
             // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-   
+
+            data: res,
+            placeholder: "Please choose an option",
+            dropdownParent: $("#modal-data"),
+        });
+    } catch (error) {
+        sweetAlert("Oops...", error.responseText, "error");
+    }
+}
+
+async function loadDivisi() {
+    try {
+        const response = await $.ajax({
+            url: baseURL + "/loadGlobal",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                tableName: "divisi",
+            }),
+            beforeSend: function () {
+                // Swal.fire({
+                //     title: "Loading",
+                //     text: "Please wait...",
+                // });
+            },
+        });
+
+        const res = response.data.map(function (item) {
+            return {
+                id: item.id,
+                text: item.nm_divisi,
+            };
+        });
+
+        $("#form-divisi").select2({
+            // theme: "bootstrap-5",
+            // width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+
             data: res,
             placeholder: "Please choose an option",
             dropdownParent: $("#modal-data"),
@@ -334,20 +385,21 @@ async function loadRole() {
 }
 
 
-$("#form-img").change(function(){
+
+$("#form-img").change(function () {
     var file = $(this).prop('files')[0]; // Use $(this) to refer to the element that triggered the event
     if (file) {
         if (file) {
             var reader = new FileReader();
-            
-            reader.onload = function(e) {
+
+            reader.onload = function (e) {
                 var imageUrl = e.target.result;
 
-                var img = $("<img>"); 
+                var img = $("<img>");
                 img.attr("class", "img-paket");
                 img.attr("src", imageUrl);
                 img.attr("style", "width:30%");
-                
+
                 $(".img-paket").replaceWith(img);
             };
 
@@ -355,19 +407,19 @@ $("#form-img").change(function(){
         }
 
     } else {
-        var img = $("<img>"); 
-            img.attr("class", "img-paket");
-            imageUrl = '/template/admin2/assets/images/lightgallry/01.jpg'
-            img.attr("src", imageUrl);
+        var img = $("<img>");
+        img.attr("class", "img-paket");
+        imageUrl = '/template/admin2/assets/images/lightgallry/01.jpg'
+        img.attr("src", imageUrl);
     }
 });
 
-function setImagePackage(urlFile){
+function setImagePackage(urlFile) {
     console.log(urlFile);
-    $(".img-paket").prop("src",null)
-    if(urlFile){
-        $(".img-paket").prop("src","/storage/"+urlFile);
-    }else{
+    $(".img-paket").prop("src", null)
+    if (urlFile) {
+        $(".img-paket").prop("src", "/storage/" + urlFile);
+    } else {
         urlFile = '/template/admin2/assets/images/lightgallry/01.jpg'
         $(".img-paket").prop("src", urlFile);
     }

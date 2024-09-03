@@ -6,7 +6,8 @@ $(document).ready(function () {
         placeholder: "Pilih Kategori",
     });
     getListData();
-    loadRole()
+    loadRole();
+    loadCat();
 });
 
 
@@ -59,6 +60,7 @@ function getListData() {
             },
             { data: "nta" },
             { data: "name" },
+            { data: "nm_kategori" },
             { data: "judul" },
             { data: "status" },
             { data: "type_doc" },
@@ -93,7 +95,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 4,
+                targets: 5,
                 className: "text-center",
             },
             {
@@ -108,7 +110,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 5,
+                targets: 6,
                 className: "text-center",
             },
             {
@@ -120,7 +122,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 7,
+                targets: 8,
                 className: "text-center",
             },
 
@@ -137,7 +139,7 @@ function getListData() {
                     return $rowData;
                 },
                 visible: true,
-                targets: 8,
+                targets: 9,
                 className: "text-center",
             },
         ],
@@ -174,6 +176,7 @@ function getListData() {
         },
     });
 }
+
 
 function setImagePackage(urlFile) {
     console.log(urlFile);
@@ -282,6 +285,7 @@ function editdata(rowData) {
     $("#form-isi").text(rowData.s_text).prop("disabled", true);
     $("#form-nama").val(rowData.nama).prop("disabled", true)
     $("#form-tujuan").val(rowData.nta_tujuan).prop("disabled", true).trigger("change")
+    $("#form-kategori").val(rowData.kategori_berkas).prop("disabled", true).trigger("change")
     $("#modal-data").modal("show");
 }
 
@@ -303,7 +307,8 @@ $("#add-btn").on("click", function (e) {
     $("#form-judul").val("").prop("disabled", false);
     $("#form-isi").text("").prop("disabled", false)
     $("#form-nama").val("").prop("disabled", false)
-    $("#form-tujuan").val("").prop("disabled", false)
+    $("#form-tujuan").val("").prop("disabled", false).trigger("change")
+    $("#form-kategori").val("").prop("disabled", false).trigger("change")
     $("#modal-data").modal("show");
 });
 
@@ -347,10 +352,18 @@ function checkValidation() {
         )
     )
         return false;
+
+    if (
+        validationSwalFailed(
+            (isObject["kategori_berkas"] = $el),
+            "Pilih Kategori Berkas."
+        )
+    )
+        return false;
     if (
         validationSwalFailed(
             (isObject["type_doc"] = $el),
-            "Please choose a type."
+            "Pilih Tipe Berkas."
         )
     )
         return false;
@@ -485,6 +498,40 @@ async function loadRole() {
         });
 
         $("#form-tujuan").select2({
+            data: res,
+            placeholder: "Please choose an option",
+            dropdownParent: $("#modal-data"),
+        });
+    } catch (error) {
+        sweetAlert("Oops...", error.responseText, "error");
+    }
+}
+
+async function loadCat() {
+    try {
+        const response = await $.ajax({
+            url: baseURL + "/loadGlobal",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                tableName: "kategori_berkas",
+            }),
+            beforeSend: function () {
+                // Swal.fire({
+                //     title: "Loading",
+                //     text: "Please wait...",
+                // });
+            },
+        });
+
+        const res = response.data.map(function (item) {
+            return {
+                id: item.id,
+                text: item.nm_kategori,
+            };
+        });
+
+        $("#form-kategori").select2({
             data: res,
             placeholder: "Please choose an option",
             dropdownParent: $("#modal-data"),
