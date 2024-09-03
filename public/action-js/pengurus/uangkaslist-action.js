@@ -199,7 +199,7 @@ $("#add-btn").on("click", function (e) {
     isObject["id"] = null;
 
     $("#form-nta").val(ntaid).prop("disabled",true);
-    $("#form-nominal").val("");
+    $("#form-nominal").val(formatRupiah(5000)).prop("disabled",true);
 
     $("#modal-data").modal("show");
 });
