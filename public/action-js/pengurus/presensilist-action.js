@@ -1,4 +1,4 @@
-let dtpr,dtpr_piket;
+let dtpr, dtpr_piket;
 
 $(document).ready(function () {
     $(".js-example-basic-single").select2({
@@ -7,7 +7,36 @@ $(document).ready(function () {
     });
     getListData();
     getListDataJadwal()
+    updateButtonVisibility()
 });
+
+function getTimeInGMT7() {
+
+    var now = new Date();
+    var utcOffset = now.getTimezoneOffset() * 60000;
+    var localTime = now.getTime() - utcOffset;
+    var gmt7Time = new Date(localTime);
+
+    var hours = gmt7Time.getHours(); 
+    var minutes = gmt7Time.getMinutes();
+    var seconds = gmt7Time.getSeconds();
+    
+    
+    return { hours: hours, minutes: minutes, seconds: seconds };
+}
+
+function updateButtonVisibility() {
+    var time = getTimeInGMT7();
+    var currentHour = time.hours;
+    console.log("jam sekarang:"+currentHour);
+    if (currentHour >= 8 && currentHour <= 17) {
+        $('#add-btn').show();
+        $('#min-btn').show();
+    } else {
+        $('#add-btn').remove();
+        $('#min-btn').remove();
+    }
+}
 
 
 showAspirasi()
@@ -17,7 +46,7 @@ function showAspirasi() {
         type: "POST",
         data: JSON.stringify({
             tableName: "divisi",
-            where:"u.nta ='"+ntaid+"'"
+            where: "u.nta ='" + ntaid + "'"
         }),
 
         dataType: "json",
@@ -28,18 +57,18 @@ function showAspirasi() {
             //     text: "Please wait...",
             // });
         },
-        complete: function () {},
+        complete: function () { },
         success: function (response) {
-           
+
             if (response.code == 0) {
-              
+
                 isopen = response.data[0].hari_piket;
-                if(isopen){
-                    $(".notice-piket").text("Anda Piket Setiap Hari "+isopen)
-                }else{
+                if (isopen) {
+                    $(".notice-piket").text("Anda Piket Setiap Hari " + isopen)
+                } else {
                     $(".notice-piket").empty()
                 }
-                
+
             } else {
                 sweetAlert("Oops...", response.message, "error");
             }
@@ -50,7 +79,7 @@ function showAspirasi() {
             sweetAlert("Oops...", xhr.responseText, "error");
         },
     });
-    
+
 }
 
 // console.log(roleid);
@@ -65,7 +94,7 @@ function getListData() {
         ajax: {
             url: baseURL + "/loadGlobal",
             type: "POST",
-            contentType: "application/json", 
+            contentType: "application/json",
             data: function (d) {
                 return JSON.stringify({
                     tableName: "presensis",
@@ -169,7 +198,7 @@ function getListData() {
             {
                 mRender: function (data, type, row) {
                     var checkin = row.checkout;  // String tanggal dan waktu
-                    if(checkin != null){
+                    if (checkin != null) {
                         var createdAt = new Date(checkin.replace(" ", "T"));  // Ganti spasi dengan 'T' untuk parsing
 
                         // Cek apakah parsing berhasil
@@ -179,14 +208,14 @@ function getListData() {
                             var now = new Date();
                             var today = now.toISOString().slice(0, 10);  // Format hari ini (YYYY-MM-DD)
                             var createdAtDate = createdAt.toISOString().slice(0, 10);  // Format tanggal checkin (YYYY-MM-DD)
-    
+
                             if (createdAtDate === today) {
                                 $('#min-btn').remove()
                                 console.log("Tanggal checkin sama dengan hari ini.");
                             }
                         }
                     }
-                   
+
 
                     return checkin
                 },
@@ -198,7 +227,7 @@ function getListData() {
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    if(roleid == 15){
+                    if (roleid == 15) {
                         $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
                     }
 
@@ -295,7 +324,7 @@ function getListDataJadwal() {
             {
                 mRender: function (data, type, row) {
                     $rowData = "No Action Availabel"
-                    if(roleid == 15){
+                    if (roleid == 15) {
                         $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
                         // $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
                     }
@@ -344,7 +373,7 @@ function editdatapiket(rowData) {
 
 $("#save-btn-piket").on("click", function (e) {
     e.preventDefault();
-    
+
     isObject.hari_piket = $("#form-hari").val()
     savePiket();
 });
@@ -438,18 +467,18 @@ function editdata(rowData) {
 
     if (rowData.status == 10) {
         aspirasi_status = 10
-        $("#save-btn").text("Unvalidated").prop("disabled",true)
+        $("#save-btn").text("Unvalidated").prop("disabled", true)
     }
     if (rowData.status == 20) {
         aspirasi_status = 30
-        if(roleid == 15){
-            $("#save-btn").text("Validated").prop("disabled",false)
+        if (roleid == 15) {
+            $("#save-btn").text("Validated").prop("disabled", false)
         }
 
     }
     if (rowData.status == 30) {
         aspirasi_status = 30
-        $("#save-btn").text("Validated").prop("disabled",true)
+        $("#save-btn").text("Validated").prop("disabled", true)
     }
 
     $("#form-status").val(aspirasi_status)
@@ -474,7 +503,7 @@ $("#add-btn").on("click", function (e) {
         }
         $("#form-status").val(10)
         $("#form-lokasi").val("").prop("disabled", true);
-       
+
         $("#form-desc").text("").prop("disabled", false)
         $("#save-btn").text("Checkin")
     } else {
@@ -489,7 +518,7 @@ $("#min-btn").on("click", function (e) {
     if (makesureloc) {
         isObject = {};
         isObject["id"] = null;
-        
+
         $("#form-nta").val("").prop("disabled", false)
         if (ntaid != 0) {
             $("#form-nta").val(ntaid).prop("disabled", true);
@@ -684,7 +713,7 @@ function showPosition(position) {
         "<br>Distance from UNIKOM: " + distance.toFixed(2) + " meters"
 
     if (distance > distanceThreshold) {
-        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than "+distanceThreshold +" Meters", "error");
+        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than " + distanceThreshold + " Meters", "error");
         $("#save-btn").prop("disabled", true)
         return false;
     }
