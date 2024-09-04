@@ -21,10 +21,10 @@ use App\Http\Controllers\GenerateController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/linkstorage', function () {
-    Artisan::call('storage:link');
-});
-
+Route::get('/link', function(){
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    echo 'ok';
+ });
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 // Rute untuk melakukan proses login
 Route::post('/login', [AuthController::class, 'login']);
