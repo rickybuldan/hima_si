@@ -212,10 +212,10 @@
                 </li> --}}
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="media profile-media">
-                        @guest
+                        {{-- @guest
                             <img class="b-r-10" src="{{ asset('template/admin2/assets/images/dashboard/profile.png') }}"
                                 alt="">
-                        @endguest
+                        @endguest --}}
                         @auth
                             <img class="b-r-10" style="width: 35px;height: 42px;"
                                 src="/storage/{{ Auth::user()->file_path }}" alt="">
@@ -228,7 +228,7 @@
                             @endauth
                         </div>
                     </div>
-                    <ul class="profile-dropdown onhover-show-div">
+                    {{-- <ul class="profile-dropdown onhover-show-div"> --}}
                         {{-- <li><a href="#"><i data-feather="user"></i><span>Account </span></a></li>
                         <li><a href="#"><i data-feather="mail"></i><span>Inbox</span></a></li>
                         <li><a href="#"><i data-feather="file-text"></i><span>Taskboard</span></a></li>
@@ -237,7 +237,7 @@
                             <li>
                                 <form id="logout" action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <a
+                                    <a href="#"
                                         onclick="localStorage.removeItem('savedHTML'); document.getElementById('logout').submit();"><i
                                             data-feather="log-out"> </i><span>Logout</span></a>
                                 </form>
@@ -253,7 +253,7 @@
                                         <line x1="15" y1="12" x2="3" y2="12"></line>
                                     </svg><span>Log in</span></a></li>
                         @endguest
-                    </ul>
+                    {{-- </ul> --}}
                 </li>
             </ul>
         </div>
