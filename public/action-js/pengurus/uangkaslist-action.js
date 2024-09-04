@@ -229,7 +229,7 @@ function checkValidation() {
 
     isObject["status"] = $("#form-status").val()
     isObject["expense"] = 0
-
+    isObject["deskripsi"] = null
     saveData();
 }
 
