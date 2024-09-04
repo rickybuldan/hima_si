@@ -618,7 +618,7 @@ class JsonDataController extends Controller
                         $image->move($destinationPath, $fileName);
                 
                         // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = '/images/' . $fileName;
+                        $imagePath = 'images/' . $fileName;
                     }
 
                     $status = [];
@@ -1328,7 +1328,7 @@ class JsonDataController extends Controller
                         $image->move($destinationPath, $fileName);
                 
                         // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = '/images/' . $fileName;
+                        $imagePath = 'images/' . $fileName;
                     }else{
                         if($data->id){
                             $berkasProgram = User::find($data->id);
@@ -1650,7 +1650,7 @@ class JsonDataController extends Controller
                         $image->move($destinationPath, $fileName);
                 
                         // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = '/images/' . $fileName;
+                        $imagePath = 'images/' . $fileName;
                     }
                     else{
                         if($data->id){
