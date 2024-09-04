@@ -22,7 +22,7 @@ use App\Http\Controllers\GenerateController;
 |
 */
 Route::get('/link', function(){
-    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    Artisan::call('storage:link');
     echo 'ok';
  });
 Route::get('/login', [AuthController::class, 'index'])->name('login');
