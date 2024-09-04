@@ -909,7 +909,7 @@ class JsonDataController extends Controller
                                 FROM
                                     uang_kas uk
                                 LEFT JOIN
-                                    users us ON us.nta = uk.nta;";
+                                    users us ON us.nta = uk.nta";
                     }
                    
                     if ($whereClause) {
