@@ -605,20 +605,7 @@ class JsonDataController extends Controller
                     $imagePath = null;
 
                     if ($image) {
-                        // Tentukan folder penyimpanan
-                        $destinationPath = public_path('/images');
-                
-                        // Buat folder jika belum ada
-                        if (!file_exists($destinationPath)) {
-                            mkdir($destinationPath, 0755, true);
-                        }
-                
-                        // Simpan gambar dengan nama asli
-                        $fileName = $image->getClientOriginalName();
-                        $image->move($destinationPath, $fileName);
-                
-                        // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = 'images/' . $fileName;
+                        $imagePath = $image->store('images', 'public');
                     }
 
                     $status = [];
@@ -1315,20 +1302,7 @@ class JsonDataController extends Controller
                     $imagePath = null;
                     $data = json_decode($request->input('data'));
                     if ($image) {
-                        // Tentukan folder penyimpanan
-                        $destinationPath = public_path('/images');
-                
-                        // Buat folder jika belum ada
-                        if (!file_exists($destinationPath)) {
-                            mkdir($destinationPath, 0755, true);
-                        }
-                
-                        // Simpan gambar dengan nama asli
-                        $fileName = $image->getClientOriginalName();
-                        $image->move($destinationPath, $fileName);
-                
-                        // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = 'images/' . $fileName;
+                        $imagePath = $image->store('images', 'public');
                     }else{
                         if($data->id){
                             $berkasProgram = User::find($data->id);
@@ -1637,20 +1611,7 @@ class JsonDataController extends Controller
                     $imagePath = null;
 
                     if ($image) {
-                        // Tentukan folder penyimpanan
-                        $destinationPath = public_path('/images');
-                
-                        // Buat folder jika belum ada
-                        if (!file_exists($destinationPath)) {
-                            mkdir($destinationPath, 0755, true);
-                        }
-                
-                        // Simpan gambar dengan nama asli
-                        $fileName = $image->getClientOriginalName();
-                        $image->move($destinationPath, $fileName);
-                
-                        // Dapatkan path file relatif untuk digunakan di HTML
-                        $imagePath = 'images/' . $fileName;
+                        $imagePath = $image->store('images', 'public');
                     }
                     else{
                         if($data->id){
