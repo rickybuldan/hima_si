@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Master;
 use App\Models\Pengadaan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 
 class GeneralController extends Controller
@@ -14,7 +15,9 @@ class GeneralController extends Controller
         $MasterClass = new Master();
 
         $checkAuth = $MasterClass->AuthenticatedView($request->route()->uri());
-        
+        File::link(
+            storage_path('app/public'), public_path('storage')
+        );
         if($checkAuth['code'] == $MasterClass::CODE_SUCCESS){
             $roled = $MasterClass->getSession('role_id');
             if($roled != 6){
