@@ -127,6 +127,12 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="mb-3 row add-division" style="display:none">
+                                    <label class="col-sm-3 col-form-label">Nama Divisi</label>
+                                    <div class="col-sm-9 mb-0">
+                                        <input id="form-nm-divisi" type="text" class="form-control" placeholder="Divisi Baru">
+                                    </div>
+                                </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-3 col-form-label">NTA</label>
                                     <div class="col-sm-9">

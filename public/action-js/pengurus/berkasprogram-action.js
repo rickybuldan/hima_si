@@ -43,6 +43,7 @@ function getListData() {
                 // loaderPage(false);
             },
         },
+        scrollX:true,
         language: {
             oPaginate: {
                 sFirst: "First",
@@ -355,7 +356,7 @@ function checkValidation() {
 
     if (
         validationSwalFailed(
-            (isObject["kategori_berkas"] = $el),
+            (isObject["kategori_berkas"] = $("#form-kategori").val()),
             "Pilih Kategori Berkas."
         )
     )
@@ -371,6 +372,7 @@ function checkValidation() {
     isObject["isi"] = $("#form-isi").val()
     isObject["status"] = $("#form-status").val()
     isObject["judul"] = $("#form-judul").val()
+    isObject["nm_kategori"] = $("#form-nm-kategori").val()
 
     saveData();
 }
@@ -540,3 +542,12 @@ async function loadCat() {
         sweetAlert("Oops...", error.responseText, "error");
     }
 }
+
+$("#form-kategori").change(function () {
+    var value = $(this).val()
+    if(value == 5){
+        $(".add-kategori").show()
+    }else{
+        $(".add-kategori").hide()
+    }
+});

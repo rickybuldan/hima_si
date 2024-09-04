@@ -41,7 +41,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive  theme-scrollbar">
-                            <table id="table-list" class="dataTables_wrapper">
+                            <table id="table-list" class="dataTables_wrapper display nowrap">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -98,6 +98,12 @@
                                         <select class="form-select form-select-sm" id="form-kategori">
 
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row add-kategori" style="display:none">
+                                    <label class="col-sm-3 col-form-label">Nama Kategori Berkas</label>
+                                    <div class="col-sm-9 mb-0">
+                                        <input id="form-nm-kategori" type="text" class="form-control" placeholder="Kategori Baru">
                                     </div>
                                 </div>
                                 <fieldset class="mb-3">

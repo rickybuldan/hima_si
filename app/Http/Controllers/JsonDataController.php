@@ -6,6 +6,7 @@ use App\Models\Aspirasi;
 use App\Models\BerkasProgram;
 use App\Models\Divisi;
 use App\Models\House;
+use App\Models\KategoriBerkas;
 use App\Models\Package;
 
 use App\Models\Pet;
@@ -642,6 +643,8 @@ class JsonDataController extends Controller
                         );
 
                     }
+
+
 
                     $saved = $MasterClass->checkErrorModel($saved);
 
@@ -1310,9 +1313,17 @@ class JsonDataController extends Controller
                         }
                     }                   
 
+                    if ($data->divisi == 5) {
+                        $createdRecord = Divisi::create([
+                            'nm_divisi' => $data->nm_divisi,
+                        ]);
+                        $data->divisi = $createdRecord->id;
+                        $savedDivisi = $MasterClass->checkErrorModel($createdRecord);
+                    }
+
                     $status = [];
                     if ($data->password) {
-                        
+
                         $saved = User::updateOrCreate(
                             [
                                 'id' => $data->id,
@@ -1321,7 +1332,7 @@ class JsonDataController extends Controller
                                 'name' => $data->name,
                                 'email' => $data->email,
                                 'role_id' => $data->role_id,
-                                // 'password' => Hash::make($data->password),
+                                'password' => Hash::make($data->password),
                                 'is_active' => $data->is_active,
                                 'nta' => $data->nta,
                                 'file_path' => $imagePath,
@@ -1501,6 +1512,14 @@ class JsonDataController extends Controller
                                 $filePath = $berkasProgram->file_path;
                             }
                         }
+                    }
+                    if($data->kategori_berkas == 5){
+                        $createdRecord = KategoriBerkas::create([
+                            'nm_kategori' => $data->nm_kategori,
+                        ]);
+                        $data->kategori_berkas = $createdRecord->id;
+                        $savedDivisi = $MasterClass->checkErrorModel($createdRecord);
+                        // dd($data);
                     }
                     // dd($data);
                     $saved = BerkasProgram::updateOrCreate(

@@ -4,7 +4,7 @@ let dtpr;
 
 $(document).ready(function () {
     getListData();
-    
+
 });
 
 function getListData() {
@@ -196,14 +196,8 @@ function checkValidation() {
     )
 
         return false;
-    if (
-        validationSwalFailed(
-            (isObject["divisi"] = $("#form-divisi").val()),
-            "Please choose a divisi."
-        )
-    )
-
-        return false;
+    isObject["divisi"] = $("#form-divisi").val()
+    isObject["nm_divisi"] = $("#form-nm-divisi").val()
 
     isObject["password"] = $("#form-password").val();
     isObject["tahun_angkatan"] = $("#form-angkatan").val();
@@ -384,7 +378,14 @@ async function loadDivisi() {
     }
 }
 
-
+$("#form-divisi").change(function () {
+    var value = $(this).val()
+    if(value == 5){
+        $(".add-division").show()
+    }else{
+        $(".add-division").hide()
+    }
+});
 
 $("#form-img").change(function () {
     var file = $(this).prop('files')[0]; // Use $(this) to refer to the element that triggered the event
