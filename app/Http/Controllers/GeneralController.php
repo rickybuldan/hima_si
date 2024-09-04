@@ -15,9 +15,9 @@ class GeneralController extends Controller
         $MasterClass = new Master();
 
         $checkAuth = $MasterClass->AuthenticatedView($request->route()->uri());
-        File::link(
-            storage_path('app/public'), public_path('storage')
-        );
+        // File::link(
+        //     storage_path('app/public'), public_path('storage')
+        // );
         if($checkAuth['code'] == $MasterClass::CODE_SUCCESS){
             $roled = $MasterClass->getSession('role_id');
             if($roled != 6){
