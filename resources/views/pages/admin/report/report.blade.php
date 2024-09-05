@@ -32,7 +32,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="p-2">
-                            <h5>{{ $subtitle }} Laporang Keuangan</h5>
+                            <h5>{{ $subtitle }}</h5>
                         </div>
                         <div class="p-2">
                             <a class="btn btn-danger" id="add-btn"><i class="fa fa-minus"></i> Pengeluaran</a>
