@@ -13,9 +13,7 @@ $(document).ready(function () {
 function getTimeInGMT7() {
 
     var now = new Date();
-    var utcOffset = now.getTimezoneOffset() * 60000;
-    var localTime = now.getTime() - utcOffset;
-    var gmt7Time = new Date(localTime);
+    var gmt7Time = new Date(now);
 
     var hours = gmt7Time.getHours(); 
     var minutes = gmt7Time.getMinutes();
