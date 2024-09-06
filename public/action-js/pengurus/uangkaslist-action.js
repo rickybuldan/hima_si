@@ -98,7 +98,7 @@ function getListData() {
                 mRender: function (data, type, row) {
                     // var $rowData = '<button class="btn btn-sm btn-icon isEdit i_update"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit font-medium-2 text-info"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>';
                     // $rowData += `<button class="btn btn-sm btn-icon delete-record i_delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash font-medium-2 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>`;
-                    $rowData = `Minggu Ke-`+row.transaksi_ke;
+                    $rowData = `Minggu Ke-`+row.transaksi_ke +` (${formatRupiah(row.total_kumulatif)})`;
                     return $rowData;
                 },
                 visible: true,
@@ -199,7 +199,7 @@ $("#add-btn").on("click", function (e) {
     isObject["id"] = null;
 
     $("#form-nta").val(ntaid).prop("disabled",true);
-    $("#form-nominal").val(formatRupiah(5000)).prop("disabled",true);
+    $("#form-nominal").val("")
 
     $("#modal-data").modal("show");
 });

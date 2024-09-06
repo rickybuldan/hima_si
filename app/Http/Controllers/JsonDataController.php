@@ -896,20 +896,27 @@ class JsonDataController extends Controller
 
                     if (isset($data->group) && $data->group){
                         $query = " SELECT
-                                    uk.*,
+                                    t1.id,
+                                    t1.nta,
                                     us.name,
-                                    us.nta,
+                                    t1.nominal,
+                                    t1.expense,
+                                    t1.created_at,
                                     (
-                                        SELECT COUNT(*)
-                                        FROM uang_kas uk_sub
-                                        WHERE uk_sub.nta = uk.nta
-                                        AND uk_sub.expense = 0
-                                        AND uk_sub.created_at <= uk.created_at
-                                    ) AS transaksi_ke
+                                        SELECT SUM(CASE WHEN t2.expense = 0 THEN t2.nominal ELSE 0 END) 
+                                        FROM uang_kas t2
+                                        WHERE t2.nta = t1.nta AND t2.id <= t1.id
+                                    ) AS total_kumulatif,
+                                    FLOOR((
+                                        SELECT SUM(CASE WHEN t2.expense = 0 THEN t2.nominal ELSE 0 END) 
+                                        FROM uang_kas t2
+                                        WHERE t2.nta = t1.nta AND t2.id <= t1.id
+                                    ) / 5000) AS transaksi_ke
                                 FROM
-                                    uang_kas uk
+                                    uang_kas t1
                                 LEFT JOIN
-                                    users us ON us.nta = uk.nta";
+                                    users us ON us.nta = t1.nta";
+                                
                     }
                    
                     if ($whereClause) {
