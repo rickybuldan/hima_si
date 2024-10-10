@@ -96,7 +96,7 @@ function getListData() {
             {
                 mRender: function (data, type, row) {
                     var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
-                    if(roleid == 12){
+                    if(roleid == 12 || roleid == 15){
                         $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
                     }
                     return $rowData;

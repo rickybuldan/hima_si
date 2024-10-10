@@ -129,9 +129,9 @@ function getListData() {
 
             {
                 mRender: function (data, type, row) {
-                    var $rowData = `<button type="button" class="btn btn-info btn-sm mx-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
+                    var $rowData = `<button type="button" class="btn btn-info btn-sm me-2 edit-btn"><i class="fa fa-pencil"></i></button>`;
                     if(row.status == 10 && roleid == 15){
-                        $rowData += `<button type="button" class="btn btn-danger btn-sm batal-btn"><i class="fa fa-times" aria-hidden="true"></i></button>`;
+                        $rowData += `<button type="button" class="btn btn-danger btn-sm batal-btn me-2 "><i class="fa fa-times" aria-hidden="true"></i></button>`;
                         $rowData += `<button type="button" class="btn btn-danger btn-sm delete-btn"><i class="fa fa-trash"></i></button>`;
                     }
                     // $rowData += `<button type="button" class="btn btn-danger btn-sm batal-btn"><i class="fa fa-times" aria-hidden="true"></i></button>`;
