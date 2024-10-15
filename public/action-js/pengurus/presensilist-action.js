@@ -666,7 +666,7 @@ function saveData() {
 
 const unikomLatitude = -6.8894;
 const unikomLongitude = 107.6100;
-const distanceThreshold = 50000;
+const distanceThreshold = 10;
 
 function getLocation() {
     Swal.fire({
