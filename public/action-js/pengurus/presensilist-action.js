@@ -27,7 +27,7 @@ function updateButtonVisibility() {
     var time = getTimeInGMT7();
     var currentHour = time.hours;
     console.log("jam sekarang:"+currentHour);
-    if (currentHour >= 8 && currentHour <= 17) {
+    if (currentHour >= 8 && currentHour <= 23) {
         $('#add-btn').show();
         $('#min-btn').show();
     } else {
