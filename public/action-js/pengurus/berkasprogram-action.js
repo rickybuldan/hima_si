@@ -398,7 +398,7 @@ function deleteData(data) {
             $.ajax({
                 url: baseURL + "/deleteGlobal",
                 type: "POST",
-                data: JSON.stringify({ id: data.id, tableName: "aspirasis" }),
+                data: JSON.stringify({ id: data.id, tableName: "berkas_programs" }),
                 dataType: "json",
                 contentType: "application/json",
                 beforeSend: function () {
