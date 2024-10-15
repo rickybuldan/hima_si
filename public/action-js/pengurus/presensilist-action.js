@@ -683,7 +683,6 @@ function getLocation() {
     }
 }
 
-
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371000; // Radius bumi dalam meter
     const φ1 = lat1 * Math.PI / 180;
@@ -699,53 +698,58 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-
 function showPosition(position) {
     const userLatitude = position.coords.latitude;
     const userLongitude = position.coords.longitude;
     const distance = calculateDistance(userLatitude, userLongitude, unikomLatitude, unikomLongitude);
 
-    detail_address =
+    let detail_address =
         "Latitude: " + userLatitude +
         "<br>Longitude: " + userLongitude +
-        "<br>Distance from UNIKOM: " + distance.toFixed(2) + " meters"
+        "<br>Distance from UNIKOM: " + distance.toFixed(2) + " meters";
 
     if (distance > distanceThreshold) {
-        sweetAlert("Oops...", "You are far from UNIKOM. Distance more than " + distanceThreshold + " Meters", "error");
-        $("#save-btn").prop("disabled", true)
-        return false;
-    }
-    else {
-        $("#save-btn").prop("disabled", false)
-    }
-
-    $.ajax({
-        url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLatitude}&lon=${userLongitude}&addressdetails=1`,
-        method: 'GET',
-        dataType: 'json',
-        beforeSend: function () {
-            // Swal.fire({
-            //     title: "Loading",
-            //     text: "Please wait...",
-            // });
-        },
-        complete: function () { },
-        success: function (data) {
-            if (data && data.address) {
-                console.log(data);
-                detail_address += "<br>Your address: " + data.display_name;
-                swal("You are near UNIKOM.", detail_address, "success");
-                $("#form-lokasi").val(data.display_name).prop("disabled", true);
-                $("#modal-data").modal("show");
-            } else {
-                sweetAlert("Oops...", "Unable to retrieve address information.", "error");
+        // Fetch the address even if the user is far from UNIKOM
+        $.ajax({
+            url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLatitude}&lon=${userLongitude}&addressdetails=1`,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data && data.display_name) {
+                    detail_address += "<br>Your address: " + data.display_name;
+                    sweetAlert("Oops...", detail_address + "<br>You are far from UNIKOM. Distance more than " + distanceThreshold + " Meters", "error");
+                    $("#save-btn").prop("disabled", true);
+                } else {
+                    sweetAlert("Oops...", "Unable to retrieve address information.", "error");
+                }
+            },
+            error: function (error) {
+                sweetAlert("Oops...", "Error fetching geocoding data: " + error, "error");
             }
-        },
-        error: function (error) {
-            sweetAlert("Oops...", "Error fetching geocoding data:" + error, "error");
-        }
-    });
-
+        });
+        return false;
+    } else {
+        $("#save-btn").prop("disabled", false);
+        // Fetch the address normally when within the threshold
+        $.ajax({
+            url: `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLatitude}&lon=${userLongitude}&addressdetails=1`,
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data && data.address) {
+                    detail_address += "<br>Your address: " + data.display_name;
+                    swal("You are near UNIKOM.", detail_address, "success");
+                    $("#form-lokasi").val(data.display_name).prop("disabled", true);
+                    $("#modal-data").modal("show");
+                } else {
+                    sweetAlert("Oops...", "Unable to retrieve address information.", "error");
+                }
+            },
+            error: function (error) {
+                sweetAlert("Oops...", "Error fetching geocoding data: " + error, "error");
+            }
+        });
+    }
 }
 
 function showError(error) {
